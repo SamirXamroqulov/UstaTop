@@ -4,11 +4,215 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UstaTop</title>
-</head>
-<body>
-  <h1>🔧 UstaTop</h1>
-  <p>Kerakli ustani tez va oson toping.</p>
 
-  <button>Usta topish</button>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f6f8;
+      color: #171717;
+    }
+
+    .app {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      padding-bottom: 90px;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      color: #777;
+      margin-top: 6px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      background: white;
+      font-size: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      outline: none;
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .category {
+      background: white;
+      border: none;
+      border-radius: 16px;
+      padding: 20px 10px;
+      text-align: left;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .category span {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .category:active {
+      transform: scale(0.97);
+    }
+
+    .banner {
+      background: #111;
+      color: white;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 25px;
+    }
+
+    .banner h3 {
+      font-size: 20px;
+      margin-bottom: 7px;
+    }
+
+    .banner p {
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 5px;
+      border-top: 1px solid #ddd;
+    }
+
+    .nav-btn {
+      border: none;
+      background: none;
+      font-size: 13px;
+      color: #777;
+      cursor: pointer;
+    }
+
+    .nav-btn span {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 3px;
+    }
+
+    .active {
+      color: #111;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="header">
+      <div class="logo">🔧 UstaTop</div>
+      <div class="subtitle">Kerakli ustani tez va oson toping</div>
+    </div>
+
+    <input
+      class="search"
+      type="text"
+      placeholder="🔍 Xizmat yoki usta qidirish..."
+    >
+
+    <h2>Kategoriyalar</h2>
+
+    <div class="categories">
+
+      <button class="category">
+        <span>🔧</span>
+        Ta'mirlash
+      </button>
+
+      <button class="category">
+        <span>⚡</span>
+        Elektrik
+      </button>
+
+      <button class="category">
+        <span>💻</span>
+        Texnika
+      </button>
+
+      <button class="category">
+        <span>🚗</span>
+        Avto xizmat
+      </button>
+
+      <button class="category">
+        <span>🧹</span>
+        Tozalash
+      </button>
+
+      <button class="category">
+        <span>📦</span>
+        Yetkazib berish
+      </button>
+
+    </div>
+
+    <div class="banner">
+      <h3>Usta bo‘lib ishlaysizmi?</h3>
+      <p>UstaTop'ga xizmatlaringizni qo‘shing va yangi mijozlar toping.</p>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+
+    <button class="nav-btn active">
+      <span>🏠</span>
+      Bosh sahifa
+    </button>
+
+    <button class="nav-btn">
+      <span>📋</span>
+      Buyurtmalar
+    </button>
+
+    <button class="nav-btn">
+      <span>👤</span>
+      Profil
+    </button>
+
+  </div>
+
 </body>
 </html>
