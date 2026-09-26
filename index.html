@@ -1,487 +1,718 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UstaTop</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UstaTop</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Telegram Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
-}
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-body{
-  background:#f5f7fb;
-  color:#111827;
-  padding-bottom:80px;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-header{
-  background:#fff;
-  padding:20px;
-  border-bottom:1px solid #e5e7eb;
-}
+    body {
+      background: #f5f7fb;
+      color: #111827;
+      padding-bottom: 75px;
+    }
 
-header h1{
-  font-size:25px;
-}
+    button {
+      cursor: pointer;
+    }
 
-header p{
-  color:#6b7280;
-  margin-top:5px;
-  font-size:14px;
-}
+    /* PAGES */
 
-.search{
-  padding:15px 20px;
-  background:#fff;
-}
+    .page {
+      display: none;
+      min-height: calc(100vh - 75px);
+    }
 
-.search input{
-  width:100%;
-  padding:14px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  font-size:15px;
-  outline:none;
-}
+    .page.active {
+      display: block;
+    }
 
-.page{
-  display:none;
-}
+    /* HEADER */
 
-.page.active{
-  display:block;
-}
+    .header {
+      background: white;
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-.categories{
-  padding:15px 20px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
+    .header h1 {
+      font-size: 25px;
+    }
 
-.category{
-  background:#fff;
-  border:none;
-  padding:16px 10px;
-  border-radius:12px;
-  font-size:14px;
-  cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-}
+    .header p {
+      margin-top: 5px;
+      color: #6b7280;
+      font-size: 14px;
+    }
 
-.banner{
-  margin:5px 20px 15px;
-  padding:18px;
-  background:#111827;
-  color:#fff;
-  border-radius:15px;
-}
+    /* SEARCH */
 
-.banner h2{
-  font-size:17px;
-  margin-bottom:6px;
-}
+    .search {
+      background: white;
+      padding: 15px 20px;
+    }
 
-.banner p{
-  font-size:13px;
-  color:#d1d5db;
-  margin-bottom:12px;
-}
+    .search input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      outline: none;
+      font-size: 15px;
+    }
 
-.banner button{
-  border:0;
-  background:#fff;
-  color:#111827;
-  padding:10px 14px;
-  border-radius:9px;
-  font-weight:bold;
-}
+    /* CATEGORIES */
 
-.section-title{
-  padding:5px 20px 10px;
-  font-size:19px;
-  font-weight:bold;
-}
+    .categories {
+      padding: 15px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
-#masters{
-  padding:0 20px;
-}
+    .category {
+      border: none;
+      background: white;
+      border-radius: 14px;
+      padding: 17px 10px;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
 
-.master{
-  background:#fff;
-  padding:16px;
-  border-radius:15px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-}
+    .category:active {
+      transform: scale(.97);
+    }
 
-.master h3{
-  font-size:17px;
-  margin-bottom:7px;
-}
+    /* BANNER */
 
-.master p{
-  font-size:13px;
-  color:#6b7280;
-  margin:5px 0;
-}
+    .banner {
+      margin: 5px 20px 18px;
+      padding: 18px;
+      background: #111827;
+      color: white;
+      border-radius: 15px;
+    }
 
-.rating{
-  color:#f59e0b !important;
-  font-weight:bold;
-}
+    .banner h2 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
 
-.price{
-  font-weight:bold;
-  color:#111827 !important;
-}
+    .banner p {
+      color: #d1d5db;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 13px;
+    }
 
-.page-header{
-  padding:20px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:#fff;
-  border-bottom:1px solid #e5e7eb;
-}
+    .banner button {
+      border: none;
+      background: white;
+      color: #111827;
+      padding: 11px 15px;
+      border-radius: 9px;
+      font-weight: bold;
+    }
 
-.back{
-  border:0;
-  background:#f3f4f6;
-  width:38px;
-  height:38px;
-  border-radius:10px;
-  font-size:18px;
-}
+    /* SECTION */
 
-.page-header h2{
-  font-size:20px;
-}
+    .section-title {
+      padding: 5px 20px 12px;
+      font-size: 19px;
+      font-weight: bold;
+    }
 
-.empty{
-  margin:30px 20px;
-  padding:25px;
-  text-align:center;
-  background:#fff;
-  border-radius:15px;
-  color:#6b7280;
-}
+    /* MASTER CARDS */
 
-.profile-card,
-.menu-card,
-.form-card{
-  margin:20px;
-  background:#fff;
-  padding:20px;
-  border-radius:15px;
-}
+    #masters {
+      padding: 0 20px;
+    }
 
-.menu-item{
-  width:100%;
-  padding:16px 5px;
-  border:0;
-  border-bottom:1px solid #eee;
-  background:#fff;
-  text-align:left;
-  font-size:15px;
-}
+    .master {
+      background: white;
+      padding: 16px;
+      border-radius: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
 
-.form-card label{
-  display:block;
-  margin:13px 0 6px;
-  font-size:13px;
-  font-weight:bold;
-}
+    .master h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
 
-.form-card input,
-.form-card textarea,
-.form-card select{
-  width:100%;
-  padding:13px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:14px;
-}
+    .master p {
+      color: #6b7280;
+      font-size: 13px;
+      margin: 5px 0;
+    }
 
-.form-card textarea{
-  min-height:90px;
-  resize:none;
-}
+    .rating {
+      color: #f59e0b !important;
+      font-weight: bold;
+    }
 
-.primary{
-  width:100%;
-  margin-top:18px;
-  padding:14px;
-  border:0;
-  border-radius:11px;
-  background:#111827;
-  color:#fff;
-  font-weight:bold;
-}
+    .price {
+      color: #111827 !important;
+      font-weight: bold;
+    }
 
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  height:65px;
-  background:#fff;
-  border-top:1px solid #e5e7eb;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  z-index:10;
-}
+    /* PAGE HEADER */
 
-.bottom-nav button{
-  background:none;
-  border:0;
-  font-size:12px;
-  color:#6b7280;
-}
+    .page-header {
+      background: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-.bottom-nav button.active{
-  color:#111827;
-  font-weight:bold;
-}
-</style>
+    .page-header h2 {
+      font-size: 20px;
+    }
+
+    .back-button {
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 10px;
+      background: #f3f4f6;
+      font-size: 20px;
+    }
+
+    /* EMPTY */
+
+    .empty {
+      margin: 25px 20px;
+      padding: 30px 20px;
+      background: white;
+      border-radius: 15px;
+      text-align: center;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    /* CARDS */
+
+    .card {
+      background: white;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    /* MENU */
+
+    .menu-item {
+      width: 100%;
+      padding: 17px 5px;
+      border: none;
+      border-bottom: 1px solid #eee;
+      background: white;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    /* FORM */
+
+    .form-card {
+      background: white;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .form-info {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .form-card label {
+      display: block;
+      margin: 13px 0 6px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .form-card input,
+    .form-card textarea,
+    .form-card select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-card textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      border: none;
+      border-radius: 11px;
+      background: #111827;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 70px;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-button {
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+
+    .nav-button.active {
+      color: #111827;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
+<!-- ========================= -->
 <!-- BOSH SAHIFA -->
+<!-- ========================= -->
+
 <div id="homePage" class="page active">
 
-<header>
-<h1>🔧 UstaTop</h1>
-<p>Kerakli ustani tez va oson toping</p>
-</header>
+  <div class="header">
+    <h1>🔧 UstaTop</h1>
+    <p>Kerakli ustani tez va oson toping</p>
+  </div>
 
-<div class="search">
-<input id="searchInput" placeholder="🔍 Xizmat yoki usta qidirish...">
+  <div class="search">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="🔍 Xizmat yoki usta qidirish..."
+    >
+  </div>
+
+  <div class="categories">
+
+    <button class="category" onclick="openCategory('Ta’mirlash')">
+      🔧<br>Ta'mirlash
+    </button>
+
+    <button class="category" onclick="openCategory('Elektrik')">
+      ⚡<br>Elektrik
+    </button>
+
+    <button class="category" onclick="openCategory('Texnika')">
+      💻<br>Texnika
+    </button>
+
+    <button class="category" onclick="openCategory('Avto xizmat')">
+      🚗<br>Avto xizmat
+    </button>
+
+    <button class="category" onclick="openCategory('Tozalash')">
+      🧹<br>Tozalash
+    </button>
+
+    <button class="category" onclick="openCategory('Yetkazib berish')">
+      📦<br>Yetkazib berish
+    </button>
+
+  </div>
+
+  <div class="banner">
+    <h2>🧑‍🔧 Usta bo'lib ishlaysizmi?</h2>
+
+    <p>
+      UstaTop orqali xizmatlaringizni joylashtiring
+      va yangi mijozlar toping.
+    </p>
+
+    <button onclick="showPage('masterPage')">
+      Usta bo'lish
+    </button>
+  </div>
+
+  <div class="section-title">
+    ⭐ Ustalar
+  </div>
+
+  <div id="masters">
+    <div class="empty">
+      Hozircha ro'yxatda usta yo'q.
+    </div>
+  </div>
+
 </div>
 
-<div class="categories">
 
-<button class="category" onclick="loadMasters('Ta\\'mirlash')">
-🔧<br>Ta'mirlash
-</button>
+<!-- ========================= -->
+<!-- KATEGORIYA -->
+<!-- ========================= -->
 
-<button class="category" onclick="loadMasters('Elektrik')">
-⚡<br>Elektrik
-</button>
+<div id="categoryPage" class="page">
 
-<button class="category" onclick="loadMasters('Texnika')">
-💻<br>Texnika
-</button>
+  <div class="page-header">
 
-<button class="category" onclick="loadMasters('Avto xizmat')">
-🚗<br>Avto xizmat
-</button>
+    <button
+      class="back-button"
+      onclick="showPage('homePage')"
+    >
+      ←
+    </button>
 
-<button class="category" onclick="loadMasters('Tozalash')">
-🧹<br>Tozalash
-</button>
+    <h2 id="categoryTitle">
+      Kategoriya
+    </h2>
 
-<button class="category" onclick="loadMasters('Yetkazib berish')">
-📦<br>Yetkazib berish
-</button>
+  </div>
 
-</div>
+  <div id="categoryMasters">
 
-<div class="banner">
-<h2>🧑‍🔧 Usta bo‘lib ishlaysizmi?</h2>
-<p>UstaTop orqali mijozlar toping va xizmatlaringizni taklif qiling.</p>
-<button onclick="showPage('masterPage')">
-Usta bo‘lish
-</button>
-</div>
+    <div class="empty">
+      Ustalar yuklanmoqda...
+    </div>
 
-<div class="section-title">
-⭐ Ustalar
-</div>
-
-<div id="masters">
-<div class="empty">
-Hozircha ro‘yxatda usta yo‘q.
-</div>
-</div>
+  </div>
 
 </div>
 
 
+<!-- ========================= -->
 <!-- BUYURTMALAR -->
+<!-- ========================= -->
+
 <div id="ordersPage" class="page">
 
-<div class="page-header">
-<button class="back" onclick="showPage('homePage')">←</button>
-<h2>📋 Buyurtmalar</h2>
+  <div class="page-header">
+
+    <button
+      class="back-button"
+      onclick="showPage('homePage')"
+    >
+      ←
+    </button>
+
+    <h2>📋 Buyurtmalar</h2>
+
+  </div>
+
+  <div class="empty">
+
+    📋<br><br>
+
+    Sizda hozircha buyurtmalar yo'q.
+
+  </div>
+
 </div>
 
-<div class="empty">
-📋<br><br>
-Sizda hozircha buyurtmalar yo‘q.
-</div>
 
-</div>
-
-
+<!-- ========================= -->
 <!-- PROFIL -->
+<!-- ========================= -->
+
 <div id="profilePage" class="page">
 
-<div class="page-header">
-<button class="back" onclick="showPage('homePage')">←</button>
-<h2>👤 Profil</h2>
+  <div class="page-header">
+
+    <button
+      class="back-button"
+      onclick="showPage('homePage')"
+    >
+      ←
+    </button>
+
+    <h2>👤 Profil</h2>
+
+  </div>
+
+  <div class="card">
+
+    <h3 id="profileName">
+      Telegram foydalanuvchisi
+    </h3>
+
+    <p
+      id="profileUsername"
+      style="color:#6b7280;margin-top:7px;"
+    ></p>
+
+  </div>
+
+  <div class="card">
+
+    <button
+      class="menu-item"
+      onclick="showPage('masterPage')"
+    >
+      🧑‍🔧 Usta bo'lish
+    </button>
+
+    <button class="menu-item">
+      📱 Telefon raqami
+    </button>
+
+    <button class="menu-item">
+      📍 Shahar
+    </button>
+
+  </div>
+
 </div>
 
-<div class="profile-card">
-<h3 id="profileName">Telegram foydalanuvchisi</h3>
-<p id="profileUsername"></p>
-</div>
 
-<div class="menu-card">
+<!-- ========================= -->
+<!-- USTA BO'LISH -->
+<!-- ========================= -->
 
-<button class="menu-item" onclick="showPage('masterPage')">
-🧑‍🔧 Usta bo‘lish
-</button>
-
-<button class="menu-item">
-📱 Telefon raqamini qo‘shish
-</button>
-
-<button class="menu-item">
-📍 Shaharni tanlash
-</button>
-
-</div>
-
-</div>
-
-
-<!-- USTA BO‘LISH -->
 <div id="masterPage" class="page">
 
-<div class="page-header">
-<button class="back" onclick="showPage('homePage')">←</button>
-<h2>🧑‍🔧 Usta bo‘lish</h2>
+  <div class="page-header">
+
+    <button
+      class="back-button"
+      onclick="showPage('profilePage')"
+    >
+      ←
+    </button>
+
+    <h2>🧑‍🔧 Usta bo'lish</h2>
+
+  </div>
+
+  <div class="form-card">
+
+    <p class="form-info">
+      Haqiqiy ma'lumotlaringizni kiriting.
+      UstaTop'da faqat haqiqiy ro'yxatdan o'tgan
+      ustalar ko'rsatiladi.
+    </p>
+
+    <label>Ism</label>
+
+    <input
+      id="masterName"
+      type="text"
+      placeholder="Ismingiz"
+    >
+
+    <label>Shahar</label>
+
+    <input
+      id="masterCity"
+      type="text"
+      placeholder="Masalan: Samarqand"
+    >
+
+    <label>Kategoriya</label>
+
+    <select id="masterCategory">
+
+      <option value="">
+        Kategoriyani tanlang
+      </option>
+
+      <option value="Ta'mirlash">
+        🔧 Ta'mirlash
+      </option>
+
+      <option value="Elektrik">
+        ⚡ Elektrik
+      </option>
+
+      <option value="Texnika">
+        💻 Texnika
+      </option>
+
+      <option value="Avto xizmat">
+        🚗 Avto xizmat
+      </option>
+
+      <option value="Tozalash">
+        🧹 Tozalash
+      </option>
+
+      <option value="Yetkazib berish">
+        📦 Yetkazib berish
+      </option>
+
+    </select>
+
+    <label>O'zingiz haqingizda</label>
+
+    <textarea
+      id="masterDescription"
+      placeholder="Qanday xizmat ko'rsatasiz?"
+    ></textarea>
+
+    <label>Boshlang'ich narx</label>
+
+    <input
+      id="masterPrice"
+      type="number"
+      placeholder="Masalan: 50000"
+    >
+
+    <button
+      class="primary"
+      onclick="registerMaster()"
+    >
+      Usta sifatida ro'yxatdan o'tish
+    </button>
+
+  </div>
+
 </div>
 
-<div class="form-card">
 
-<p style="color:#6b7280;font-size:13px;">
-Haqiqiy ma'lumotlaringizni kiriting. Profil yuborilgandan keyin UstaTop'da usta sifatida ko‘rinishingiz mumkin.
-</p>
-
-<label>Ism</label>
-<input id="masterName" placeholder="Ismingiz">
-
-<label>Shahar</label>
-<input id="masterCity" placeholder="Masalan: Samarqand">
-
-<label>Kategoriya</label>
-<select id="masterCategory">
-<option value="">Tanlang</option>
-<option value="Ta'mirlash">🔧 Ta'mirlash</option>
-<option value="Elektrik">⚡ Elektrik</option>
-<option value="Texnika">💻 Texnika</option>
-<option value="Avto xizmat">🚗 Avto xizmat</option>
-<option value="Tozalash">🧹 Tozalash</option>
-<option value="Yetkazib berish">📦 Yetkazib berish</option>
-</select>
-
-<label>O‘zingiz haqingizda</label>
-<textarea id="masterDescription"
-placeholder="Qanday xizmat ko‘rsatasiz?"></textarea>
-
-<label>Boshlang‘ich narx</label>
-<input id="masterPrice" type="number" placeholder="Masalan: 50000">
-
-<button class="primary" onclick="registerMaster()">
-Usta sifatida ro‘yxatdan o‘tish
-</button>
-
-</div>
-
-</div>
-
-
+<!-- ========================= -->
 <!-- MENYU -->
+<!-- ========================= -->
+
 <div id="menuPage" class="page">
 
-<div class="page-header">
-<button class="back" onclick="showPage('homePage')">←</button>
-<h2>☰ Menyu</h2>
+  <div class="page-header">
+
+    <button
+      class="back-button"
+      onclick="showPage('homePage')"
+    >
+      ←
+    </button>
+
+    <h2>☰ Menyu</h2>
+
+  </div>
+
+  <div class="card">
+
+    <button class="menu-item">
+      ℹ️ UstaTop haqida
+    </button>
+
+    <button class="menu-item">
+      📞 Yordam
+    </button>
+
+    <button class="menu-item">
+      📜 Foydalanish qoidalari
+    </button>
+
+    <button class="menu-item">
+      🔒 Maxfiylik
+    </button>
+
+  </div>
+
 </div>
 
-<div class="menu-card">
 
-<button class="menu-item">
-ℹ️ UstaTop haqida
-</button>
+<!-- ========================= -->
+<!-- PASTKI NAV -->
+<!-- ========================= -->
 
-<button class="menu-item">
-📞 Yordam
-</button>
-
-<button class="menu-item">
-📜 Foydalanish qoidalari
-</button>
-
-<button class="menu-item">
-🔒 Maxfiylik
-</button>
-
-</div>
-
-</div>
-
-
-<!-- PASTKI NAVIGATSIYA -->
 <div class="bottom-nav">
 
-<button id="navHome" onclick="showPage('homePage')">
-🏠<br>Bosh sahifa
-</button>
+  <button
+    id="navHome"
+    class="nav-button active"
+    onclick="showPage('homePage')"
+  >
+    🏠<br>
+    Bosh sahifa
+  </button>
 
-<button id="navOrders" onclick="showPage('ordersPage')">
-📋<br>Buyurtmalar
-</button>
+  <button
+    id="navOrders"
+    class="nav-button"
+    onclick="showPage('ordersPage')"
+  >
+    📋<br>
+    Buyurtmalar
+  </button>
 
-<button id="navProfile" onclick="showPage('profilePage')">
-👤<br>Profil
-</button>
+  <button
+    id="navProfile"
+    class="nav-button"
+    onclick="showPage('profilePage')"
+  >
+    👤<br>
+    Profil
+  </button>
 
-<button id="navMenu" onclick="showPage('menuPage')">
-☰<br>Menyu
-</button>
+  <button
+    id="navMenu"
+    class="nav-button"
+    onclick="showPage('menuPage')"
+  >
+    ☰<br>
+    Menyu
+  </button>
 
 </div>
 
 
 <script>
 
+/* ==================================
+   SUPABASE
+================================== */
+
 const SUPABASE_URL =
-"https://qratbydofxbehieblqxz.supabase.co";
+  "https://qratbydofxbehieblqxz.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
+  "sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
 
 const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-/* TELEGRAM */
+/* ==================================
+   TELEGRAM
+================================== */
 
 const tg = window.Telegram.WebApp;
 
@@ -489,298 +720,484 @@ tg.ready();
 tg.expand();
 
 
-/* NAVIGATSIYA */
+/* ==================================
+   NAVIGATSIYA
+================================== */
 
-function showPage(pageId){
+function showPage(pageId) {
 
-document.querySelectorAll(".page")
-.forEach(page=>{
-page.classList.remove("active");
-});
+  const pages =
+    document.querySelectorAll(".page");
 
-document.getElementById(pageId)
-.classList.add("active");
+  pages.forEach(function(page) {
+    page.classList.remove("active");
+  });
 
-window.scrollTo(0,0);
+  const target =
+    document.getElementById(pageId);
+
+  if (target) {
+    target.classList.add("active");
+  }
+
+  updateNavigation(pageId);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+/* ==================================
+   PASTKI NAVIGATSIYA
+================================== */
+
+function updateNavigation(pageId) {
+
+  document
+    .querySelectorAll(".nav-button")
+    .forEach(function(button) {
+      button.classList.remove("active");
+    });
+
+  if (pageId === "homePage") {
+    document
+      .getElementById("navHome")
+      .classList.add("active");
+  }
+
+  if (pageId === "ordersPage") {
+    document
+      .getElementById("navOrders")
+      .classList.add("active");
+  }
+
+  if (pageId === "profilePage") {
+    document
+      .getElementById("navProfile")
+      .classList.add("active");
+  }
+
+  if (pageId === "menuPage") {
+    document
+      .getElementById("navMenu")
+      .classList.add("active");
+  }
 
 }
 
 
-/* TELEGRAM PROFIL */
+/* ==================================
+   TELEGRAM PROFIL
+================================== */
 
-function loadTelegramProfile(){
+function loadTelegramProfile() {
 
-const user = tg.initDataUnsafe?.user;
+  const user =
+    tg.initDataUnsafe &&
+    tg.initDataUnsafe.user;
 
-if(!user) return;
+  if (!user) {
+    return;
+  }
 
-document.getElementById("profileName").textContent =
-(user.first_name || "") +
-(user.last_name ? " " + user.last_name : "");
+  let name =
+    user.first_name || "Foydalanuvchi";
 
-if(user.username){
+  if (user.last_name) {
+    name += " " + user.last_name;
+  }
 
-document.getElementById("profileUsername").textContent =
-"@" + user.username;
+  document
+    .getElementById("profileName")
+    .textContent = name;
 
-}
+  if (user.username) {
+
+    document
+      .getElementById("profileUsername")
+      .textContent =
+      "@" + user.username;
+
+  }
 
 }
 
 loadTelegramProfile();
 
 
-/* USTALARNI YUKLASH */
+/* ==================================
+   KATEGORIYA
+================================== */
 
-async function loadMasters(category=null){
+async function openCategory(category) {
 
-showPage("homePage");
+  showPage("categoryPage");
 
-const container =
-document.getElementById("masters");
+  document
+    .getElementById("categoryTitle")
+    .textContent =
+    "🔧 " + category;
 
-container.innerHTML =
-'<div class="empty">Yuklanmoqda...</div>';
+  const container =
+    document.getElementById("categoryMasters");
 
-let query =
-supabaseClient
-.from("masters")
-.select("*")
-.order("rating",{ascending:false});
+  container.innerHTML =
+    '<div class="empty">Ustalar yuklanmoqda...</div>';
 
-if(category){
-query = query.eq("category",category);
-}
+  const { data, error } =
+    await supabaseClient
+      .from("masters")
+      .select("*")
+      .eq("category", category)
+      .order("rating", {
+        ascending: false
+      });
 
-const {data,error} = await query;
+  if (error) {
 
-if(error){
+    console.error(error);
 
-console.error(error);
+    container.innerHTML =
+      '<div class="empty">' +
+      'Hozircha ma\'lumot mavjud emas.' +
+      '</div>';
 
-container.innerHTML =
-'<div class="empty">Ma’lumotlarni yuklashda xatolik.</div>';
+    return;
+  }
 
-return;
+  if (!data || data.length === 0) {
 
-}
+    container.innerHTML =
+      '<div class="empty">' +
+      'Bu kategoriyada hozircha haqiqiy usta ro\'yxatdan o\'tmagan.' +
+      '</div>';
 
-if(!data || data.length===0){
+    return;
+  }
 
-container.innerHTML =
-'<div class="empty">Bu kategoriyada hozircha haqiqiy usta ro‘yxatdan o‘tmagan.</div>';
-
-return;
-
-}
-
-container.innerHTML="";
-
-data.forEach(master=>{
-
-const card =
-document.createElement("div");
-
-card.className="master";
-
-card.innerHTML=`
-
-<h3>${escapeHTML(master.name)}</h3>
-
-<p>📍 ${escapeHTML(master.city)}</p>
-
-<p>${escapeHTML(master.description || "")}</p>
-
-<p class="rating">
-⭐ ${master.rating || "0.0"}
-· ${master.completed_orders || 0} ta buyurtma
-</p>
-
-<p class="price">
-💰 ${master.price_from || 0} so‘mdan
-</p>
-
-`;
-
-container.appendChild(card);
-
-});
-
+  renderMasters(
+    data,
+    container
+  );
 }
 
 
-/* QIDIRUV */
+/* ==================================
+   USTALARNI CHIQARISH
+================================== */
+
+function renderMasters(
+  data,
+  container
+) {
+
+  container.innerHTML = "";
+
+  data.forEach(function(master) {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "master";
+
+    card.innerHTML =
+
+      "<h3>" +
+      escapeHTML(master.name) +
+      "</h3>" +
+
+      "<p>📍 " +
+      escapeHTML(master.city) +
+      "</p>" +
+
+      "<p>" +
+      escapeHTML(
+        master.description || ""
+      ) +
+      "</p>" +
+
+      "<p class='rating'>" +
+      "⭐ " +
+      (master.rating || "0.0") +
+      " · " +
+      (master.completed_orders || 0) +
+      " ta buyurtma" +
+      "</p>" +
+
+      "<p class='price'>" +
+      "💰 " +
+      (master.price_from || 0) +
+      " so'mdan" +
+      "</p>";
+
+    container.appendChild(card);
+
+  });
+
+}
+
+
+/* ==================================
+   QIDIRUV
+================================== */
 
 document
-.getElementById("searchInput")
-.addEventListener("input",async function(){
+  .getElementById("searchInput")
+  .addEventListener(
+    "input",
+    async function() {
 
-const text=this.value.trim();
+      const text =
+        this.value.trim();
 
-if(!text){
+      if (!text) {
 
-loadMasters();
-return;
+        loadAllMasters();
 
-}
+        return;
+      }
 
-const container =
-document.getElementById("masters");
+      const container =
+        document.getElementById("masters");
 
-const {data,error} =
-await supabaseClient
-.from("masters")
-.select("*")
-.ilike("name",`%${text}%`);
+      const { data, error } =
+        await supabaseClient
+          .from("masters")
+          .select("*")
+          .ilike(
+            "name",
+            "%" + text + "%"
+          );
 
-if(error){
+      if (error) {
 
-container.innerHTML =
-'<div class="empty">Qidirishda xatolik.</div>';
+        container.innerHTML =
+          '<div class="empty">' +
+          'Qidirishda xatolik yuz berdi.' +
+          '</div>';
 
-return;
+        return;
+      }
 
-}
+      if (!data || data.length === 0) {
 
-if(!data || data.length===0){
+        container.innerHTML =
+          '<div class="empty">' +
+          'Usta topilmadi.' +
+          '</div>';
 
-container.innerHTML =
-'<div class="empty">Usta topilmadi.</div>';
+        return;
+      }
 
-return;
+      renderMasters(
+        data,
+        container
+      );
 
-}
-
-container.innerHTML="";
-
-data.forEach(master=>{
-
-const card =
-document.createElement("div");
-
-card.className="master";
-
-card.innerHTML=`
-
-<h3>${escapeHTML(master.name)}</h3>
-
-<p>📍 ${escapeHTML(master.city)}</p>
-
-<p>${escapeHTML(master.description || "")}</p>
-
-<p class="rating">⭐ ${master.rating || "0.0"}</p>
-
-<p class="price">💰 ${master.price_from || 0} so‘mdan</p>
-
-`;
-
-container.appendChild(card);
-
-});
-
-});
+    }
+  );
 
 
-/* USTA RO‘YXATDAN O‘TISH */
+/* ==================================
+   BARCHA USTALAR
+================================== */
 
-async function registerMaster(){
+async function loadAllMasters() {
 
-const user =
-tg.initDataUnsafe?.user;
+  const container =
+    document.getElementById("masters");
 
-if(!user){
+  const { data, error } =
+    await supabaseClient
+      .from("masters")
+      .select("*")
+      .order("rating", {
+        ascending: false
+      });
 
-alert("Telegram orqali oching.");
+  if (error) {
 
-return;
+    container.innerHTML =
+      '<div class="empty">' +
+      'Hozircha ro\'yxatda usta yo\'q.' +
+      '</div>';
 
-}
+    return;
+  }
 
-const name =
-document.getElementById("masterName").value.trim();
+  if (!data || data.length === 0) {
 
-const city =
-document.getElementById("masterCity").value.trim();
+    container.innerHTML =
+      '<div class="empty">' +
+      'Hozircha haqiqiy usta ro\'yxatdan o\'tmagan.' +
+      '</div>';
 
-const category =
-document.getElementById("masterCategory").value;
+    return;
+  }
 
-const description =
-document.getElementById("masterDescription").value.trim();
-
-const price =
-Number(document.getElementById("masterPrice").value);
-
-
-if(!name || !city || !category){
-
-alert("Ism, shahar va kategoriyani kiriting.");
-
-return;
-
+  renderMasters(
+    data,
+    container
+  );
 }
 
 
-const {error} =
-await supabaseClient
-.from("masters")
-.insert({
+/* ==================================
+   USTA RO'YXATDAN O'TISH
+================================== */
 
-name:name,
-category:category,
-city:city,
-description:description,
-price_from:price || 0,
-rating:0,
-completed_orders:0,
-telegram_username:user.username || null
+async function registerMaster() {
 
-});
+  const user =
+    tg.initDataUnsafe &&
+    tg.initDataUnsafe.user;
+
+  const name =
+    document
+      .getElementById("masterName")
+      .value
+      .trim();
+
+  const city =
+    document
+      .getElementById("masterCity")
+      .value
+      .trim();
+
+  const category =
+    document
+      .getElementById("masterCategory")
+      .value;
+
+  const description =
+    document
+      .getElementById("masterDescription")
+      .value
+      .trim();
+
+  const price =
+    Number(
+      document
+        .getElementById("masterPrice")
+        .value
+    );
 
 
-if(error){
+  if (!name || !city || !category) {
 
-console.error(error);
+    alert(
+      "Iltimos, ism, shahar va kategoriyani kiriting."
+    );
 
-alert(
-"Ro‘yxatdan o‘tishda xatolik. Keyinroq urinib ko‘ring."
-);
+    return;
+  }
 
-return;
+
+  if (!user) {
+
+    alert(
+      "Iltimos, UstaTop'ni Telegram ichidan oching."
+    );
+
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("masters")
+      .insert({
+
+        name: name,
+
+        category: category,
+
+        city: city,
+
+        description:
+          description,
+
+        price_from:
+          price || 0,
+
+        rating: 0,
+
+        completed_orders: 0,
+
+        telegram_username:
+          user.username || null
+
+      });
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Profilni yuborishda xatolik yuz berdi."
+    );
+
+    return;
+  }
+
+
+  alert(
+    "Usta profili yuborildi! 🎉"
+  );
+
+
+  document
+    .getElementById("masterName")
+    .value = "";
+
+  document
+    .getElementById("masterCity")
+    .value = "";
+
+  document
+    .getElementById("masterCategory")
+    .value = "";
+
+  document
+    .getElementById("masterDescription")
+    .value = "";
+
+  document
+    .getElementById("masterPrice")
+    .value = "";
+
+
+  showPage("homePage");
+
+  loadAllMasters();
 
 }
 
 
-alert("Usta profili muvaffaqiyatli yuborildi! 🎉");
+/* ==================================
+   XAVFSIZ MATN
+================================== */
 
-document.getElementById("masterName").value="";
-document.getElementById("masterCity").value="";
-document.getElementById("masterCategory").value="";
-document.getElementById("masterDescription").value="";
-document.getElementById("masterPrice").value="";
+function escapeHTML(text) {
 
-loadMasters();
-
-}
-
-
-/* XAVFSIZ MATN */
-
-function escapeHTML(text){
-
-return String(text)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
 
-/* BOSHLANG‘ICH YUKLASH */
+/* ==================================
+   BOSHLASH
+================================== */
 
-loadMasters();
+loadAllMasters();
 
 </script>
 
