@@ -1,370 +1,786 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UstaTop</title>
 
-  <title>UstaTop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+body{
+  background:#f5f7fb;
+  color:#111827;
+  padding-bottom:80px;
+}
 
-    body {
-      background: #f5f7fb;
-      color: #111827;
-      padding-bottom: 80px;
-    }
+header{
+  background:#fff;
+  padding:20px;
+  border-bottom:1px solid #e5e7eb;
+}
 
-    header {
-      background: #ffffff;
-      padding: 20px;
-      border-bottom: 1px solid #e5e7eb;
-    }
+header h1{
+  font-size:25px;
+}
 
-    header h1 {
-      font-size: 25px;
-    }
+header p{
+  color:#6b7280;
+  margin-top:5px;
+  font-size:14px;
+}
 
-    header p {
-      color: #6b7280;
-      margin-top: 5px;
-      font-size: 14px;
-    }
+.search{
+  padding:15px 20px;
+  background:#fff;
+}
 
-    .search {
-      padding: 15px 20px;
-      background: white;
-    }
+.search input{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:15px;
+  outline:none;
+}
 
-    .search input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      font-size: 15px;
-      outline: none;
-    }
+.page{
+  display:none;
+}
 
-    .categories {
-      padding: 15px 20px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
+.page.active{
+  display:block;
+}
 
-    .category {
-      background: white;
-      border: none;
-      padding: 15px 10px;
-      border-radius: 12px;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-    }
+.categories{
+  padding:15px 20px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
 
-    .category:active {
-      transform: scale(.97);
-    }
+.category{
+  background:#fff;
+  border:none;
+  padding:16px 10px;
+  border-radius:12px;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
 
-    .banner {
-      margin: 5px 20px 15px;
-      padding: 18px;
-      background: #111827;
-      color: white;
-      border-radius: 15px;
-    }
+.banner{
+  margin:5px 20px 15px;
+  padding:18px;
+  background:#111827;
+  color:#fff;
+  border-radius:15px;
+}
 
-    .banner h2 {
-      font-size: 17px;
-      margin-bottom: 5px;
-    }
+.banner h2{
+  font-size:17px;
+  margin-bottom:6px;
+}
 
-    .banner p {
-      font-size: 13px;
-      color: #d1d5db;
-    }
+.banner p{
+  font-size:13px;
+  color:#d1d5db;
+  margin-bottom:12px;
+}
 
-    .section-title {
-      padding: 5px 20px 10px;
-      font-size: 19px;
-      font-weight: bold;
-    }
+.banner button{
+  border:0;
+  background:#fff;
+  color:#111827;
+  padding:10px 14px;
+  border-radius:9px;
+  font-weight:bold;
+}
 
-    #masters {
-      padding: 0 20px;
-    }
+.section-title{
+  padding:5px 20px 10px;
+  font-size:19px;
+  font-weight:bold;
+}
 
-    .master {
-      background: white;
-      padding: 16px;
-      border-radius: 15px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-    }
+#masters{
+  padding:0 20px;
+}
 
-    .master h3 {
-      font-size: 17px;
-      margin-bottom: 7px;
-    }
+.master{
+  background:#fff;
+  padding:16px;
+  border-radius:15px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
 
-    .master p {
-      font-size: 13px;
-      color: #6b7280;
-      margin: 5px 0;
-    }
+.master h3{
+  font-size:17px;
+  margin-bottom:7px;
+}
 
-    .rating {
-      font-weight: bold;
-      color: #f59e0b;
-    }
+.master p{
+  font-size:13px;
+  color:#6b7280;
+  margin:5px 0;
+}
 
-    .price {
-      margin-top: 8px;
-      font-weight: bold;
-    }
+.rating{
+  color:#f59e0b !important;
+  font-weight:bold;
+}
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 65px;
-      background: white;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
+.price{
+  font-weight:bold;
+  color:#111827 !important;
+}
 
-    .bottom-nav button {
-      background: none;
-      border: none;
-      font-size: 12px;
-      color: #6b7280;
-    }
+.page-header{
+  padding:20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+}
 
-    .loading {
-      text-align: center;
-      color: #6b7280;
-      padding: 20px;
-    }
-  </style>
+.back{
+  border:0;
+  background:#f3f4f6;
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  font-size:18px;
+}
+
+.page-header h2{
+  font-size:20px;
+}
+
+.empty{
+  margin:30px 20px;
+  padding:25px;
+  text-align:center;
+  background:#fff;
+  border-radius:15px;
+  color:#6b7280;
+}
+
+.profile-card,
+.menu-card,
+.form-card{
+  margin:20px;
+  background:#fff;
+  padding:20px;
+  border-radius:15px;
+}
+
+.menu-item{
+  width:100%;
+  padding:16px 5px;
+  border:0;
+  border-bottom:1px solid #eee;
+  background:#fff;
+  text-align:left;
+  font-size:15px;
+}
+
+.form-card label{
+  display:block;
+  margin:13px 0 6px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.form-card input,
+.form-card textarea,
+.form-card select{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:14px;
+}
+
+.form-card textarea{
+  min-height:90px;
+  resize:none;
+}
+
+.primary{
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border:0;
+  border-radius:11px;
+  background:#111827;
+  color:#fff;
+  font-weight:bold;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:65px;
+  background:#fff;
+  border-top:1px solid #e5e7eb;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:10;
+}
+
+.bottom-nav button{
+  background:none;
+  border:0;
+  font-size:12px;
+  color:#6b7280;
+}
+
+.bottom-nav button.active{
+  color:#111827;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
+<!-- BOSH SAHIFA -->
+<div id="homePage" class="page active">
+
 <header>
-  <h1>🔧 UstaTop</h1>
-  <p>Kerakli ustani tez va oson toping</p>
+<h1>🔧 UstaTop</h1>
+<p>Kerakli ustani tez va oson toping</p>
 </header>
 
 <div class="search">
-  <input
-    id="searchInput"
-    type="text"
-    placeholder="🔍 Xizmat yoki usta qidirish..."
-  >
+<input id="searchInput" placeholder="🔍 Xizmat yoki usta qidirish...">
 </div>
 
 <div class="categories">
 
-  <button class="category" onclick="loadMasters('Ta\\'mirlash')">
-    🔧 Ta'mirlash
-  </button>
+<button class="category" onclick="loadMasters('Ta\\'mirlash')">
+🔧<br>Ta'mirlash
+</button>
 
-  <button class="category" onclick="loadMasters('Elektrik')">
-    ⚡ Elektrik
-  </button>
+<button class="category" onclick="loadMasters('Elektrik')">
+⚡<br>Elektrik
+</button>
 
-  <button class="category" onclick="loadMasters('Texnika')">
-    💻 Texnika
-  </button>
+<button class="category" onclick="loadMasters('Texnika')">
+💻<br>Texnika
+</button>
 
-  <button class="category" onclick="loadMasters('Avto xizmat')">
-    🚗 Avto xizmat
-  </button>
+<button class="category" onclick="loadMasters('Avto xizmat')">
+🚗<br>Avto xizmat
+</button>
 
-  <button class="category" onclick="loadMasters('Tozalash')">
-    🧹 Tozalash
-  </button>
+<button class="category" onclick="loadMasters('Tozalash')">
+🧹<br>Tozalash
+</button>
 
-  <button class="category" onclick="loadMasters('Yetkazib berish')">
-    📦 Yetkazib berish
-  </button>
+<button class="category" onclick="loadMasters('Yetkazib berish')">
+📦<br>Yetkazib berish
+</button>
 
 </div>
 
 <div class="banner">
-  <h2>Usta bo‘lib ishlaysizmi?</h2>
-  <p>UstaTop orqali yangi mijozlarni toping.</p>
+<h2>🧑‍🔧 Usta bo‘lib ishlaysizmi?</h2>
+<p>UstaTop orqali mijozlar toping va xizmatlaringizni taklif qiling.</p>
+<button onclick="showPage('masterPage')">
+Usta bo‘lish
+</button>
 </div>
 
 <div class="section-title">
-  ⭐ Mashhur ustalar
+⭐ Ustalar
 </div>
 
 <div id="masters">
-  <div class="loading">Ustalar yuklanmoqda...</div>
+<div class="empty">
+Hozircha ro‘yxatda usta yo‘q.
+</div>
 </div>
 
-<div class="bottom-nav">
-  <button>🏠<br>Bosh sahifa</button>
-  <button>📋<br>Buyurtmalar</button>
-  <button>👤<br>Profil</button>
 </div>
+
+
+<!-- BUYURTMALAR -->
+<div id="ordersPage" class="page">
+
+<div class="page-header">
+<button class="back" onclick="showPage('homePage')">←</button>
+<h2>📋 Buyurtmalar</h2>
+</div>
+
+<div class="empty">
+📋<br><br>
+Sizda hozircha buyurtmalar yo‘q.
+</div>
+
+</div>
+
+
+<!-- PROFIL -->
+<div id="profilePage" class="page">
+
+<div class="page-header">
+<button class="back" onclick="showPage('homePage')">←</button>
+<h2>👤 Profil</h2>
+</div>
+
+<div class="profile-card">
+<h3 id="profileName">Telegram foydalanuvchisi</h3>
+<p id="profileUsername"></p>
+</div>
+
+<div class="menu-card">
+
+<button class="menu-item" onclick="showPage('masterPage')">
+🧑‍🔧 Usta bo‘lish
+</button>
+
+<button class="menu-item">
+📱 Telefon raqamini qo‘shish
+</button>
+
+<button class="menu-item">
+📍 Shaharni tanlash
+</button>
+
+</div>
+
+</div>
+
+
+<!-- USTA BO‘LISH -->
+<div id="masterPage" class="page">
+
+<div class="page-header">
+<button class="back" onclick="showPage('homePage')">←</button>
+<h2>🧑‍🔧 Usta bo‘lish</h2>
+</div>
+
+<div class="form-card">
+
+<p style="color:#6b7280;font-size:13px;">
+Haqiqiy ma'lumotlaringizni kiriting. Profil yuborilgandan keyin UstaTop'da usta sifatida ko‘rinishingiz mumkin.
+</p>
+
+<label>Ism</label>
+<input id="masterName" placeholder="Ismingiz">
+
+<label>Shahar</label>
+<input id="masterCity" placeholder="Masalan: Samarqand">
+
+<label>Kategoriya</label>
+<select id="masterCategory">
+<option value="">Tanlang</option>
+<option value="Ta'mirlash">🔧 Ta'mirlash</option>
+<option value="Elektrik">⚡ Elektrik</option>
+<option value="Texnika">💻 Texnika</option>
+<option value="Avto xizmat">🚗 Avto xizmat</option>
+<option value="Tozalash">🧹 Tozalash</option>
+<option value="Yetkazib berish">📦 Yetkazib berish</option>
+</select>
+
+<label>O‘zingiz haqingizda</label>
+<textarea id="masterDescription"
+placeholder="Qanday xizmat ko‘rsatasiz?"></textarea>
+
+<label>Boshlang‘ich narx</label>
+<input id="masterPrice" type="number" placeholder="Masalan: 50000">
+
+<button class="primary" onclick="registerMaster()">
+Usta sifatida ro‘yxatdan o‘tish
+</button>
+
+</div>
+
+</div>
+
+
+<!-- MENYU -->
+<div id="menuPage" class="page">
+
+<div class="page-header">
+<button class="back" onclick="showPage('homePage')">←</button>
+<h2>☰ Menyu</h2>
+</div>
+
+<div class="menu-card">
+
+<button class="menu-item">
+ℹ️ UstaTop haqida
+</button>
+
+<button class="menu-item">
+📞 Yordam
+</button>
+
+<button class="menu-item">
+📜 Foydalanish qoidalari
+</button>
+
+<button class="menu-item">
+🔒 Maxfiylik
+</button>
+
+</div>
+
+</div>
+
+
+<!-- PASTKI NAVIGATSIYA -->
+<div class="bottom-nav">
+
+<button id="navHome" onclick="showPage('homePage')">
+🏠<br>Bosh sahifa
+</button>
+
+<button id="navOrders" onclick="showPage('ordersPage')">
+📋<br>Buyurtmalar
+</button>
+
+<button id="navProfile" onclick="showPage('profilePage')">
+👤<br>Profil
+</button>
+
+<button id="navMenu" onclick="showPage('menuPage')">
+☰<br>Menyu
+</button>
+
+</div>
+
 
 <script>
 
-  const SUPABASE_URL =
-    "https://qratbydofxbehieblqxz.supabase.co";
+const SUPABASE_URL =
+"https://qratbydofxbehieblqxz.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
+const SUPABASE_KEY =
+"sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-
-  async function loadMasters(category = null) {
-
-    const container = document.getElementById("masters");
-
-    container.innerHTML =
-      '<div class="loading">Yuklanmoqda...</div>';
-
-    let query = supabaseClient
-      .from("masters")
-      .select("*")
-      .order("rating", { ascending: false });
-
-    if (category) {
-      query = query.eq("category", category);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error(error);
-
-      container.innerHTML =
-        '<div class="loading">Ustalarni yuklashda xatolik yuz berdi.</div>';
-
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      container.innerHTML =
-        '<div class="loading">Bu kategoriyada hozircha usta yo‘q.</div>';
-
-      return;
-    }
-
-    container.innerHTML = "";
-
-    data.forEach(master => {
-
-      const card = document.createElement("div");
-
-      card.className = "master";
-
-      card.innerHTML = `
-        <h3>${master.name}</h3>
-
-        <p>📍 ${master.city}</p>
-
-        <p>${master.description || "Xizmatlar haqida ma'lumot yo‘q."}</p>
-
-        <p class="rating">
-          ⭐ ${master.rating || "0.0"}
-          · ${master.completed_orders || 0} ta buyurtma
-        </p>
-
-        <p class="price">
-          💰 ${master.price_from || 0} so‘mdan
-        </p>
-      `;
-
-      container.appendChild(card);
-
-    });
-  }
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
 
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", async function () {
+/* TELEGRAM */
 
-      const text = this.value.trim();
+const tg = window.Telegram.WebApp;
 
-      if (!text) {
-        loadMasters();
-        return;
-      }
-
-      const container =
-        document.getElementById("masters");
-
-      const { data, error } =
-        await supabaseClient
-          .from("masters")
-          .select("*")
-          .ilike("name", `%${text}%`);
-
-      if (error) {
-
-        container.innerHTML =
-          '<div class="loading">Qidirishda xatolik.</div>';
-
-        return;
-      }
-
-      container.innerHTML = "";
-
-      if (!data || data.length === 0) {
-
-        container.innerHTML =
-          '<div class="loading">Usta topilmadi.</div>';
-
-        return;
-      }
-
-      data.forEach(master => {
-
-        const card =
-          document.createElement("div");
-
-        card.className = "master";
-
-        card.innerHTML = `
-          <h3>${master.name}</h3>
-          <p>📍 ${master.city}</p>
-          <p>${master.description || ""}</p>
-          <p class="rating">
-            ⭐ ${master.rating || "0.0"}
-          </p>
-          <p class="price">
-            💰 ${master.price_from || 0} so‘mdan
-          </p>
-        `;
-
-        container.appendChild(card);
-
-      });
-
-    });
+tg.ready();
+tg.expand();
 
 
-  loadMasters();
+/* NAVIGATSIYA */
+
+function showPage(pageId){
+
+document.querySelectorAll(".page")
+.forEach(page=>{
+page.classList.remove("active");
+});
+
+document.getElementById(pageId)
+.classList.add("active");
+
+window.scrollTo(0,0);
+
+}
+
+
+/* TELEGRAM PROFIL */
+
+function loadTelegramProfile(){
+
+const user = tg.initDataUnsafe?.user;
+
+if(!user) return;
+
+document.getElementById("profileName").textContent =
+(user.first_name || "") +
+(user.last_name ? " " + user.last_name : "");
+
+if(user.username){
+
+document.getElementById("profileUsername").textContent =
+"@" + user.username;
+
+}
+
+}
+
+loadTelegramProfile();
+
+
+/* USTALARNI YUKLASH */
+
+async function loadMasters(category=null){
+
+showPage("homePage");
+
+const container =
+document.getElementById("masters");
+
+container.innerHTML =
+'<div class="empty">Yuklanmoqda...</div>';
+
+let query =
+supabaseClient
+.from("masters")
+.select("*")
+.order("rating",{ascending:false});
+
+if(category){
+query = query.eq("category",category);
+}
+
+const {data,error} = await query;
+
+if(error){
+
+console.error(error);
+
+container.innerHTML =
+'<div class="empty">Ma’lumotlarni yuklashda xatolik.</div>';
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+container.innerHTML =
+'<div class="empty">Bu kategoriyada hozircha haqiqiy usta ro‘yxatdan o‘tmagan.</div>';
+
+return;
+
+}
+
+container.innerHTML="";
+
+data.forEach(master=>{
+
+const card =
+document.createElement("div");
+
+card.className="master";
+
+card.innerHTML=`
+
+<h3>${escapeHTML(master.name)}</h3>
+
+<p>📍 ${escapeHTML(master.city)}</p>
+
+<p>${escapeHTML(master.description || "")}</p>
+
+<p class="rating">
+⭐ ${master.rating || "0.0"}
+· ${master.completed_orders || 0} ta buyurtma
+</p>
+
+<p class="price">
+💰 ${master.price_from || 0} so‘mdan
+</p>
+
+`;
+
+container.appendChild(card);
+
+});
+
+}
+
+
+/* QIDIRUV */
+
+document
+.getElementById("searchInput")
+.addEventListener("input",async function(){
+
+const text=this.value.trim();
+
+if(!text){
+
+loadMasters();
+return;
+
+}
+
+const container =
+document.getElementById("masters");
+
+const {data,error} =
+await supabaseClient
+.from("masters")
+.select("*")
+.ilike("name",`%${text}%`);
+
+if(error){
+
+container.innerHTML =
+'<div class="empty">Qidirishda xatolik.</div>';
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+container.innerHTML =
+'<div class="empty">Usta topilmadi.</div>';
+
+return;
+
+}
+
+container.innerHTML="";
+
+data.forEach(master=>{
+
+const card =
+document.createElement("div");
+
+card.className="master";
+
+card.innerHTML=`
+
+<h3>${escapeHTML(master.name)}</h3>
+
+<p>📍 ${escapeHTML(master.city)}</p>
+
+<p>${escapeHTML(master.description || "")}</p>
+
+<p class="rating">⭐ ${master.rating || "0.0"}</p>
+
+<p class="price">💰 ${master.price_from || 0} so‘mdan</p>
+
+`;
+
+container.appendChild(card);
+
+});
+
+});
+
+
+/* USTA RO‘YXATDAN O‘TISH */
+
+async function registerMaster(){
+
+const user =
+tg.initDataUnsafe?.user;
+
+if(!user){
+
+alert("Telegram orqali oching.");
+
+return;
+
+}
+
+const name =
+document.getElementById("masterName").value.trim();
+
+const city =
+document.getElementById("masterCity").value.trim();
+
+const category =
+document.getElementById("masterCategory").value;
+
+const description =
+document.getElementById("masterDescription").value.trim();
+
+const price =
+Number(document.getElementById("masterPrice").value);
+
+
+if(!name || !city || !category){
+
+alert("Ism, shahar va kategoriyani kiriting.");
+
+return;
+
+}
+
+
+const {error} =
+await supabaseClient
+.from("masters")
+.insert({
+
+name:name,
+category:category,
+city:city,
+description:description,
+price_from:price || 0,
+rating:0,
+completed_orders:0,
+telegram_username:user.username || null
+
+});
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"Ro‘yxatdan o‘tishda xatolik. Keyinroq urinib ko‘ring."
+);
+
+return;
+
+}
+
+
+alert("Usta profili muvaffaqiyatli yuborildi! 🎉");
+
+document.getElementById("masterName").value="";
+document.getElementById("masterCity").value="";
+document.getElementById("masterCategory").value="";
+document.getElementById("masterDescription").value="";
+document.getElementById("masterPrice").value="";
+
+loadMasters();
+
+}
+
+
+/* XAVFSIZ MATN */
+
+function escapeHTML(text){
+
+return String(text)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* BOSHLANG‘ICH YUKLASH */
+
+loadMasters();
 
 </script>
 
