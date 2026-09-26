@@ -1,1203 +1,2020 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UstaTop</title>
+<meta charset="UTF-8">
 
-  <!-- Telegram Mini App -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>UstaTop</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    body {
-      background: #f5f7fb;
-      color: #111827;
-      padding-bottom: 75px;
-    }
+<style>
 
-    button {
-      cursor: pointer;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    /* PAGES */
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #111827;
+    padding-bottom: 75px;
+}
 
-    .page {
-      display: none;
-      min-height: calc(100vh - 75px);
-    }
+button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
 
-    .page.active {
-      display: block;
-    }
+.hidden {
+    display: none !important;
+}
 
-    /* HEADER */
+/* TOPBAR */
 
-    .header {
-      background: white;
-      padding: 20px;
-      border-bottom: 1px solid #e5e7eb;
-    }
+.topbar {
+    background: white;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
 
-    .header h1 {
-      font-size: 25px;
-    }
+.topbar h2 {
+    font-size: 20px;
+}
 
-    .header p {
-      margin-top: 5px;
-      color: #6b7280;
-      font-size: 14px;
-    }
+.back-btn {
+    background: #f0f1f3;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 22px;
+}
 
-    /* SEARCH */
+/* HEADER */
 
-    .search {
-      background: white;
-      padding: 15px 20px;
-    }
+.header {
+    background: linear-gradient(
+        135deg,
+        #6d28d9,
+        #8b5cf6
+    );
 
-    .search input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      outline: none;
-      font-size: 15px;
-    }
+    color: white;
+    padding: 25px 18px 30px;
+    border-radius: 0 0 25px 25px;
+}
 
-    /* CATEGORIES */
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 7px;
+}
 
-    .categories {
-      padding: 15px 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+.header p {
+    opacity: .9;
+    font-size: 14px;
+}
 
-    .category {
-      border: none;
-      background: white;
-      border-radius: 14px;
-      padding: 17px 10px;
-      font-size: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-    }
+.search-box {
+    margin-top: 18px;
+    background: white;
+    border-radius: 15px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    .category:active {
-      transform: scale(.97);
-    }
+.search-box input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+}
 
-    /* BANNER */
+/* CONTENT */
 
-    .banner {
-      margin: 5px 20px 18px;
-      padding: 18px;
-      background: #111827;
-      color: white;
-      border-radius: 15px;
-    }
+.content {
+    padding: 18px 15px;
+}
 
-    .banner h2 {
-      font-size: 17px;
-      margin-bottom: 7px;
-    }
+.section-title {
+    font-size: 20px;
+    margin-bottom: 13px;
+}
 
-    .banner p {
-      color: #d1d5db;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 13px;
-    }
+/* CATEGORIES */
 
-    .banner button {
-      border: none;
-      background: white;
-      color: #111827;
-      padding: 11px 15px;
-      border-radius: 9px;
-      font-weight: bold;
-    }
+.categories {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 11px;
+}
 
-    /* SECTION */
+.category {
+    background: white;
+    padding: 18px 10px;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
 
-    .section-title {
-      padding: 5px 20px 12px;
-      font-size: 19px;
-      font-weight: bold;
-    }
+.category:active {
+    transform: scale(.97);
+}
 
-    /* MASTER CARDS */
+.category-icon {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 7px;
+}
 
-    #masters {
-      padding: 0 20px;
-    }
+/* BANNER */
 
-    .master {
-      background: white;
-      padding: 16px;
-      border-radius: 15px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-    }
+.banner {
+    margin-top: 20px;
+    background: linear-gradient(
+        135deg,
+        #111827,
+        #374151
+    );
 
-    .master h3 {
-      font-size: 17px;
-      margin-bottom: 7px;
-    }
+    color: white;
+    border-radius: 18px;
+    padding: 20px;
+}
 
-    .master p {
-      color: #6b7280;
-      font-size: 13px;
-      margin: 5px 0;
-    }
+.banner h3 {
+    font-size: 20px;
+    margin-bottom: 7px;
+}
 
-    .rating {
-      color: #f59e0b !important;
-      font-weight: bold;
-    }
+.banner p {
+    font-size: 13px;
+    opacity: .85;
+    margin-bottom: 15px;
+}
 
-    .price {
-      color: #111827 !important;
-      font-weight: bold;
-    }
+/* BUTTON */
 
-    /* PAGE HEADER */
+.main-btn {
+    width: 100%;
+    background: #7c3aed;
+    color: white;
+    padding: 14px;
+    border-radius: 13px;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 12px;
+}
 
-    .page-header {
-      background: white;
-      padding: 15px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid #e5e7eb;
-    }
+.main-btn:active {
+    transform: scale(.98);
+}
 
-    .page-header h2 {
-      font-size: 20px;
-    }
+/* MASTER CARD */
 
-    .back-button {
-      width: 38px;
-      height: 38px;
-      border: none;
-      border-radius: 10px;
-      background: #f3f4f6;
-      font-size: 20px;
-    }
+.master-card {
+    background: white;
+    border-radius: 17px;
+    padding: 17px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 9px rgba(0,0,0,.05);
+    transition: .15s;
+}
 
-    /* EMPTY */
+.master-card:active {
+    transform: scale(.98);
+}
 
-    .empty {
-      margin: 25px 20px;
-      padding: 30px 20px;
-      background: white;
-      border-radius: 15px;
-      text-align: center;
-      color: #6b7280;
-      line-height: 1.6;
-    }
+.master-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
 
-    /* CARDS */
+.master-card p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 6px;
+}
 
-    .card {
-      background: white;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 15px;
-    }
+.master-price {
+    color: #7c3aed !important;
+    font-weight: bold;
+}
 
-    /* MENU */
+/* EMPTY */
 
-    .menu-item {
-      width: 100%;
-      padding: 17px 5px;
-      border: none;
-      border-bottom: 1px solid #eee;
-      background: white;
-      text-align: left;
-      font-size: 15px;
-    }
+.empty {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: 16px;
+    color: #6b7280;
+}
 
-    /* FORM */
+/* PROFILE */
 
-    .form-card {
-      background: white;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 15px;
-    }
+.profile-card {
+    background: white;
+    margin: 15px;
+    padding: 22px;
+    border-radius: 20px;
+    text-align: center;
+}
 
-    .form-info {
-      color: #6b7280;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 15px;
-    }
+.avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #ede9fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    margin: 0 auto 12px;
+}
 
-    .form-card label {
-      display: block;
-      margin: 13px 0 6px;
-      font-size: 13px;
-      font-weight: bold;
-    }
+.profile-card h2 {
+    margin-bottom: 5px;
+}
 
-    .form-card input,
-    .form-card textarea,
-    .form-card select {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 14px;
-      outline: none;
-    }
+.profile-card p {
+    color: #6b7280;
+    font-size: 14px;
+}
 
-    .form-card textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
+/* FORM */
 
-    .primary {
-      width: 100%;
-      margin-top: 18px;
-      padding: 14px;
-      border: none;
-      border-radius: 11px;
-      background: #111827;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-    }
+.form {
+    padding: 16px;
+}
 
-    /* BOTTOM NAV */
+.form-group {
+    margin-bottom: 15px;
+}
 
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 70px;
-      background: white;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 100;
-    }
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+    font-size: 14px;
+}
 
-    .nav-button {
-      border: none;
-      background: transparent;
-      color: #6b7280;
-      font-size: 12px;
-      padding: 5px 10px;
-    }
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    outline: none;
+    background: white;
+    font-family: inherit;
+    font-size: 14px;
+}
 
-    .nav-button.active {
-      color: #111827;
-      font-weight: bold;
-    }
-  </style>
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* MASTER PROFILE */
+
+.master-profile {
+    padding: 20px 15px;
+    text-align: center;
+}
+
+.master-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #ede9fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 45px;
+    margin: 10px auto 15px;
+}
+
+.master-profile h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.master-category {
+    color: #7c3aed;
+    font-weight: bold;
+}
+
+.rating {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.rating span {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.profile-info {
+    background: white;
+    border-radius: 18px;
+    margin-top: 20px;
+    padding: 5px 18px;
+    text-align: left;
+}
+
+.profile-info div {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-info div:last-child {
+    border-bottom: none;
+}
+
+.profile-info b {
+    font-size: 14px;
+}
+
+.profile-info p {
+    color: #6b7280;
+    margin-top: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 68px;
+    background: white;
+    border-top: 1px solid #eee;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    z-index: 100;
+}
+
+.nav-btn {
+    background: white;
+    color: #777;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.nav-btn span {
+    font-size: 21px;
+}
+
+.nav-btn.active {
+    color: #7c3aed;
+    font-weight: bold;
+}
+
+.loading {
+    text-align: center;
+    padding: 25px;
+    color: #777;
+}
+
+</style>
 </head>
 
 <body>
 
-<!-- ========================= -->
-<!-- BOSH SAHIFA -->
-<!-- ========================= -->
+<!-- HOME -->
 
-<div id="homePage" class="page active">
+<div id="homePage">
 
-  <div class="header">
-    <h1>🔧 UstaTop</h1>
-    <p>Kerakli ustani tez va oson toping</p>
-  </div>
+    <div class="header">
 
-  <div class="search">
-    <input
-      id="searchInput"
-      type="text"
-      placeholder="🔍 Xizmat yoki usta qidirish..."
-    >
-  </div>
+        <h1>UstaTop 🔧</h1>
 
-  <div class="categories">
+        <p>
+            Kerakli ustani tez va oson toping
+        </p>
 
-    <button class="category" onclick="openCategory('Ta’mirlash')">
-      🔧<br>Ta'mirlash
-    </button>
+        <div class="search-box">
 
-    <button class="category" onclick="openCategory('Elektrik')">
-      ⚡<br>Elektrik
-    </button>
+            🔎
 
-    <button class="category" onclick="openCategory('Texnika')">
-      💻<br>Texnika
-    </button>
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Usta yoki xizmat qidiring..."
+                oninput="searchMasters()"
+            >
 
-    <button class="category" onclick="openCategory('Avto xizmat')">
-      🚗<br>Avto xizmat
-    </button>
+        </div>
 
-    <button class="category" onclick="openCategory('Tozalash')">
-      🧹<br>Tozalash
-    </button>
-
-    <button class="category" onclick="openCategory('Yetkazib berish')">
-      📦<br>Yetkazib berish
-    </button>
-
-  </div>
-
-  <div class="banner">
-    <h2>🧑‍🔧 Usta bo'lib ishlaysizmi?</h2>
-
-    <p>
-      UstaTop orqali xizmatlaringizni joylashtiring
-      va yangi mijozlar toping.
-    </p>
-
-    <button onclick="showPage('masterPage')">
-      Usta bo'lish
-    </button>
-  </div>
-
-  <div class="section-title">
-    ⭐ Ustalar
-  </div>
-
-  <div id="masters">
-    <div class="empty">
-      Hozircha ro'yxatda usta yo'q.
-    </div>
-  </div>
-
-</div>
-
-
-<!-- ========================= -->
-<!-- KATEGORIYA -->
-<!-- ========================= -->
-
-<div id="categoryPage" class="page">
-
-  <div class="page-header">
-
-    <button
-      class="back-button"
-      onclick="showPage('homePage')"
-    >
-      ←
-    </button>
-
-    <h2 id="categoryTitle">
-      Kategoriya
-    </h2>
-
-  </div>
-
-  <div id="categoryMasters">
-
-    <div class="empty">
-      Ustalar yuklanmoqda...
     </div>
 
-  </div>
+
+    <div class="content">
+
+        <h2 class="section-title">
+            Xizmatlar
+        </h2>
+
+
+        <div class="categories">
+
+            <button
+                class="category"
+                onclick="openCategory('Ta\\'mirlash')"
+            >
+
+                <span class="category-icon">
+                    🔧
+                </span>
+
+                Ta'mirlash
+
+            </button>
+
+
+            <button
+                class="category"
+                onclick="openCategory('Elektrik')"
+            >
+
+                <span class="category-icon">
+                    ⚡
+                </span>
+
+                Elektrik
+
+            </button>
+
+
+            <button
+                class="category"
+                onclick="openCategory('Texnika')"
+            >
+
+                <span class="category-icon">
+                    💻
+                </span>
+
+                Texnika
+
+            </button>
+
+
+            <button
+                class="category"
+                onclick="openCategory('Avto xizmat')"
+            >
+
+                <span class="category-icon">
+                    🚗
+                </span>
+
+                Avto xizmat
+
+            </button>
+
+
+            <button
+                class="category"
+                onclick="openCategory('Tozalash')"
+            >
+
+                <span class="category-icon">
+                    🧹
+                </span>
+
+                Tozalash
+
+            </button>
+
+
+            <button
+                class="category"
+                onclick="openCategory('Yetkazib berish')"
+            >
+
+                <span class="category-icon">
+                    📦
+                </span>
+
+                Yetkazib berish
+
+            </button>
+
+        </div>
+
+
+        <div class="banner">
+
+            <h3>
+                Usta bo‘ling 👨‍🔧
+            </h3>
+
+            <p>
+                Xizmatlaringizni UstaTop'da
+                joylashtiring va mijozlar toping.
+            </p>
+
+            <button
+                class="main-btn"
+                onclick="openMasterRegistration()"
+            >
+                Usta bo‘lish
+            </button>
+
+        </div>
+
+
+        <div style="margin-top:25px;">
+
+            <h2 class="section-title">
+                Ustalar
+            </h2>
+
+            <div id="homeMasters">
+
+                <div class="loading">
+                    Yuklanmoqda...
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 
-<!-- ========================= -->
-<!-- BUYURTMALAR -->
-<!-- ========================= -->
+<!-- CATEGORY -->
 
-<div id="ordersPage" class="page">
+<div id="categoryPage" class="hidden">
 
-  <div class="page-header">
+    <div class="topbar">
 
-    <button
-      class="back-button"
-      onclick="showPage('homePage')"
-    >
-      ←
-    </button>
+        <button
+            class="back-btn"
+            onclick="goHome()"
+        >
+            ←
+        </button>
 
-    <h2>📋 Buyurtmalar</h2>
+        <h2 id="categoryTitle">
+            Ustalar
+        </h2>
 
-  </div>
-
-  <div class="empty">
-
-    📋<br><br>
-
-    Sizda hozircha buyurtmalar yo'q.
-
-  </div>
-
-</div>
+    </div>
 
 
-<!-- ========================= -->
-<!-- PROFIL -->
-<!-- ========================= -->
+    <div class="content">
 
-<div id="profilePage" class="page">
+        <div id="categoryMasters">
 
-  <div class="page-header">
+            <div class="loading">
+                Yuklanmoqda...
+            </div>
 
-    <button
-      class="back-button"
-      onclick="showPage('homePage')"
-    >
-      ←
-    </button>
+        </div>
 
-    <h2>👤 Profil</h2>
-
-  </div>
-
-  <div class="card">
-
-    <h3 id="profileName">
-      Telegram foydalanuvchisi
-    </h3>
-
-    <p
-      id="profileUsername"
-      style="color:#6b7280;margin-top:7px;"
-    ></p>
-
-  </div>
-
-  <div class="card">
-
-    <button
-      class="menu-item"
-      onclick="showPage('masterPage')"
-    >
-      🧑‍🔧 Usta bo'lish
-    </button>
-
-    <button class="menu-item">
-      📱 Telefon raqami
-    </button>
-
-    <button class="menu-item">
-      📍 Shahar
-    </button>
-
-  </div>
+    </div>
 
 </div>
 
 
-<!-- ========================= -->
-<!-- USTA BO'LISH -->
-<!-- ========================= -->
+<!-- ORDERS -->
 
-<div id="masterPage" class="page">
+<div id="ordersPage" class="hidden">
 
-  <div class="page-header">
+    <div class="topbar">
 
-    <button
-      class="back-button"
-      onclick="showPage('profilePage')"
-    >
-      ←
-    </button>
+        <h2>
+            Buyurtmalar
+        </h2>
 
-    <h2>🧑‍🔧 Usta bo'lish</h2>
+    </div>
 
-  </div>
 
-  <div class="form-card">
+    <div class="content">
 
-    <p class="form-info">
-      Haqiqiy ma'lumotlaringizni kiriting.
-      UstaTop'da faqat haqiqiy ro'yxatdan o'tgan
-      ustalar ko'rsatiladi.
-    </p>
+        <div class="empty">
 
-    <label>Ism</label>
+            📋
 
-    <input
-      id="masterName"
-      type="text"
-      placeholder="Ismingiz"
-    >
+            <br><br>
 
-    <label>Shahar</label>
+            Hozircha buyurtmalar yo‘q.
 
-    <input
-      id="masterCity"
-      type="text"
-      placeholder="Masalan: Samarqand"
-    >
+        </div>
 
-    <label>Kategoriya</label>
-
-    <select id="masterCategory">
-
-      <option value="">
-        Kategoriyani tanlang
-      </option>
-
-      <option value="Ta'mirlash">
-        🔧 Ta'mirlash
-      </option>
-
-      <option value="Elektrik">
-        ⚡ Elektrik
-      </option>
-
-      <option value="Texnika">
-        💻 Texnika
-      </option>
-
-      <option value="Avto xizmat">
-        🚗 Avto xizmat
-      </option>
-
-      <option value="Tozalash">
-        🧹 Tozalash
-      </option>
-
-      <option value="Yetkazib berish">
-        📦 Yetkazib berish
-      </option>
-
-    </select>
-
-    <label>O'zingiz haqingizda</label>
-
-    <textarea
-      id="masterDescription"
-      placeholder="Qanday xizmat ko'rsatasiz?"
-    ></textarea>
-
-    <label>Boshlang'ich narx</label>
-
-    <input
-      id="masterPrice"
-      type="number"
-      placeholder="Masalan: 50000"
-    >
-
-    <button
-      class="primary"
-      onclick="registerMaster()"
-    >
-      Usta sifatida ro'yxatdan o'tish
-    </button>
-
-  </div>
+    </div>
 
 </div>
 
 
-<!-- ========================= -->
-<!-- MENYU -->
-<!-- ========================= -->
+<!-- PROFILE -->
 
-<div id="menuPage" class="page">
+<div id="profilePage" class="hidden">
 
-  <div class="page-header">
+    <div class="topbar">
 
-    <button
-      class="back-button"
-      onclick="showPage('homePage')"
-    >
-      ←
-    </button>
+        <h2>
+            Profil
+        </h2>
 
-    <h2>☰ Menyu</h2>
+    </div>
 
-  </div>
 
-  <div class="card">
+    <div class="profile-card">
 
-    <button class="menu-item">
-      ℹ️ UstaTop haqida
-    </button>
+        <div class="avatar">
+            👤
+        </div>
 
-    <button class="menu-item">
-      📞 Yordam
-    </button>
+        <h2 id="profileName">
+            Foydalanuvchi
+        </h2>
 
-    <button class="menu-item">
-      📜 Foydalanish qoidalari
-    </button>
+        <p id="profileUsername">
+            Telegram foydalanuvchisi
+        </p>
 
-    <button class="menu-item">
-      🔒 Maxfiylik
-    </button>
 
-  </div>
+        <button
+            class="main-btn"
+            onclick="openMasterRegistration()"
+        >
+            👨‍🔧 Usta bo‘lish
+        </button>
+
+    </div>
 
 </div>
 
 
-<!-- ========================= -->
-<!-- PASTKI NAV -->
-<!-- ========================= -->
+<!-- USTA BO‘LISH -->
+
+<div id="menuPage" class="hidden">
+
+    <div class="topbar">
+
+        <button
+            class="back-btn"
+            onclick="showProfile()"
+        >
+            ←
+        </button>
+
+        <h2>
+            Usta bo‘lish
+        </h2>
+
+    </div>
+
+
+    <div class="form">
+
+        <div class="form-group">
+
+            <label>
+                Ism yoki ism-familiya
+            </label>
+
+            <input
+                id="masterName"
+                type="text"
+                placeholder="Masalan: Samir Xamroqulov"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Kategoriya
+            </label>
+
+            <select id="masterCategory">
+
+                <option value="Ta'mirlash">
+                    🔧 Ta'mirlash
+                </option>
+
+                <option value="Elektrik">
+                    ⚡ Elektrik
+                </option>
+
+                <option value="Texnika">
+                    💻 Texnika
+                </option>
+
+                <option value="Avto xizmat">
+                    🚗 Avto xizmat
+                </option>
+
+                <option value="Tozalash">
+                    🧹 Tozalash
+                </option>
+
+                <option value="Yetkazib berish">
+                    📦 Yetkazib berish
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Shahar
+            </label>
+
+            <input
+                id="masterCity"
+                type="text"
+                placeholder="Masalan: Samarqand"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                O‘zingiz haqingizda
+            </label>
+
+            <textarea
+                id="masterDescription"
+                placeholder="Qanday xizmat ko‘rsatasiz?"
+            ></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Narx, so‘mdan
+            </label>
+
+            <input
+                id="masterPrice"
+                type="number"
+                placeholder="Masalan: 50000"
+            >
+
+        </div>
+
+
+        <button
+            class="main-btn"
+            onclick="registerMaster()"
+        >
+            ✅ E'lonni joylash
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- MASTER PROFILE -->
+
+<div id="masterPage" class="hidden"></div>
+
+
+<!-- BOTTOM NAV -->
 
 <div class="bottom-nav">
 
-  <button
-    id="navHome"
-    class="nav-button active"
-    onclick="showPage('homePage')"
-  >
-    🏠<br>
-    Bosh sahifa
-  </button>
+    <button
+        id="navHome"
+        class="nav-btn active"
+        onclick="goHome()"
+    >
 
-  <button
-    id="navOrders"
-    class="nav-button"
-    onclick="showPage('ordersPage')"
-  >
-    📋<br>
-    Buyurtmalar
-  </button>
+        <span>🏠</span>
 
-  <button
-    id="navProfile"
-    class="nav-button"
-    onclick="showPage('profilePage')"
-  >
-    👤<br>
-    Profil
-  </button>
+        Bosh sahifa
 
-  <button
-    id="navMenu"
-    class="nav-button"
-    onclick="showPage('menuPage')"
-  >
-    ☰<br>
-    Menyu
-  </button>
-
-</div>
+    </button>
 
 
-<script>
+    <button
+        id="navOrders"
+        class="nav-btn"
+        onclick="showPage('ordersPage')"
+    >
 
-/* ==================================
+        <span>📋</span>
+
+        Buyurtmalar
+
+    </button>
+
+
+    <button
+        id="navProfile"
+        class="nav-btn"
+        onclick="showProfile()"
+    >
+
+        <span>👤</span>
+
+        Profil
+
+    </button>
+
+
+    <button
+        id="navMenu"
+        class="nav-btn"
+        onclick="openMasterRegistration()"
+    >
+
+        <span>☰</span>
+
+        Menyu
+
+    </button>
+
+          </div>
+  <script>
+
+/* =========================================
    SUPABASE
-================================== */
+========================================= */
 
 const SUPABASE_URL =
-  "https://qratbydofxbehieblqxz.supabase.co";
+    "https://qratbydofxbehieblqxz.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
+    "sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
-/* ==================================
+/* =========================================
    TELEGRAM
-================================== */
+========================================= */
 
-const tg = window.Telegram.WebApp;
+const tg =
+    window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
 
-/* ==================================
-   NAVIGATSIYA
-================================== */
+const telegramUser =
+    tg.initDataUnsafe &&
+    tg.initDataUnsafe.user
+        ? tg.initDataUnsafe.user
+        : null;
+
+
+/* =========================================
+   HTML XAVFSIZLIK
+========================================= */
+
+function escapeHtml(text) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return "";
+    }
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================
+   SAHIFALAR
+========================================= */
+
+const pages = [
+    "homePage",
+    "categoryPage",
+    "ordersPage",
+    "profilePage",
+    "menuPage",
+    "masterPage"
+];
+
 
 function showPage(pageId) {
 
-  const pages =
-    document.querySelectorAll(".page");
+    pages.forEach(function(id) {
 
-  pages.forEach(function(page) {
-    page.classList.remove("active");
-  });
+        const page =
+            document.getElementById(id);
 
-  const target =
-    document.getElementById(pageId);
+        if (page) {
+            page.classList.add("hidden");
+        }
 
-  if (target) {
-    target.classList.add("active");
-  }
+    });
 
-  updateNavigation(pageId);
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+    const selected =
+        document.getElementById(pageId);
+
+
+    if (selected) {
+        selected.classList.remove("hidden");
+    }
+
+
+    updateNavigation(pageId);
 }
 
 
-/* ==================================
-   PASTKI NAVIGATSIYA
-================================== */
+/* =========================================
+   NAVIGATION
+========================================= */
 
 function updateNavigation(pageId) {
 
-  document
-    .querySelectorAll(".nav-button")
-    .forEach(function(button) {
-      button.classList.remove("active");
-    });
-
-  if (pageId === "homePage") {
     document
-      .getElementById("navHome")
-      .classList.add("active");
-  }
+        .querySelectorAll(".nav-btn")
+        .forEach(function(btn) {
 
-  if (pageId === "ordersPage") {
-    document
-      .getElementById("navOrders")
-      .classList.add("active");
-  }
+            btn.classList.remove("active");
 
-  if (pageId === "profilePage") {
-    document
-      .getElementById("navProfile")
-      .classList.add("active");
-  }
+        });
 
-  if (pageId === "menuPage") {
-    document
-      .getElementById("navMenu")
-      .classList.add("active");
-  }
 
-}
+    if (pageId === "homePage") {
 
-
-/* ==================================
-   TELEGRAM PROFIL
-================================== */
-
-function loadTelegramProfile() {
-
-  const user =
-    tg.initDataUnsafe &&
-    tg.initDataUnsafe.user;
-
-  if (!user) {
-    return;
-  }
-
-  let name =
-    user.first_name || "Foydalanuvchi";
-
-  if (user.last_name) {
-    name += " " + user.last_name;
-  }
-
-  document
-    .getElementById("profileName")
-    .textContent = name;
-
-  if (user.username) {
-
-    document
-      .getElementById("profileUsername")
-      .textContent =
-      "@" + user.username;
-
-  }
-
-}
-
-loadTelegramProfile();
-
-
-/* ==================================
-   KATEGORIYA
-================================== */
-
-async function openCategory(category) {
-
-  showPage("categoryPage");
-
-  document
-    .getElementById("categoryTitle")
-    .textContent =
-    "🔧 " + category;
-
-  const container =
-    document.getElementById("categoryMasters");
-
-  container.innerHTML =
-    '<div class="empty">Ustalar yuklanmoqda...</div>';
-
-  const { data, error } =
-    await supabaseClient
-      .from("masters")
-      .select("*")
-      .eq("category", category)
-      .order("rating", {
-        ascending: false
-      });
-
-  if (error) {
-
-    console.error(error);
-
-    container.innerHTML =
-      '<div class="empty">' +
-      'Hozircha ma\'lumot mavjud emas.' +
-      '</div>';
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
-
-    container.innerHTML =
-      '<div class="empty">' +
-      'Bu kategoriyada hozircha haqiqiy usta ro\'yxatdan o\'tmagan.' +
-      '</div>';
-
-    return;
-  }
-
-  renderMasters(
-    data,
-    container
-  );
-}
-
-
-/* ==================================
-   USTALARNI CHIQARISH
-================================== */
-
-function renderMasters(
-  data,
-  container
-) {
-
-  container.innerHTML = "";
-
-  data.forEach(function(master) {
-
-    const card =
-      document.createElement("div");
-
-    card.className = "master";
-
-    card.innerHTML =
-
-      "<h3>" +
-      escapeHTML(master.name) +
-      "</h3>" +
-
-      "<p>📍 " +
-      escapeHTML(master.city) +
-      "</p>" +
-
-      "<p>" +
-      escapeHTML(
-        master.description || ""
-      ) +
-      "</p>" +
-
-      "<p class='rating'>" +
-      "⭐ " +
-      (master.rating || "0.0") +
-      " · " +
-      (master.completed_orders || 0) +
-      " ta buyurtma" +
-      "</p>" +
-
-      "<p class='price'>" +
-      "💰 " +
-      (master.price_from || 0) +
-      " so'mdan" +
-      "</p>";
-
-    container.appendChild(card);
-
-  });
-
-}
-
-
-/* ==================================
-   QIDIRUV
-================================== */
-
-document
-  .getElementById("searchInput")
-  .addEventListener(
-    "input",
-    async function() {
-
-      const text =
-        this.value.trim();
-
-      if (!text) {
-
-        loadAllMasters();
-
-        return;
-      }
-
-      const container =
-        document.getElementById("masters");
-
-      const { data, error } =
-        await supabaseClient
-          .from("masters")
-          .select("*")
-          .ilike(
-            "name",
-            "%" + text + "%"
-          );
-
-      if (error) {
-
-        container.innerHTML =
-          '<div class="empty">' +
-          'Qidirishda xatolik yuz berdi.' +
-          '</div>';
-
-        return;
-      }
-
-      if (!data || data.length === 0) {
-
-        container.innerHTML =
-          '<div class="empty">' +
-          'Usta topilmadi.' +
-          '</div>';
-
-        return;
-      }
-
-      renderMasters(
-        data,
-        container
-      );
+        document
+            .getElementById("navHome")
+            .classList.add("active");
 
     }
-  );
 
 
-/* ==================================
-   BARCHA USTALAR
-================================== */
+    if (pageId === "ordersPage") {
 
-async function loadAllMasters() {
+        document
+            .getElementById("navOrders")
+            .classList.add("active");
 
-  const container =
-    document.getElementById("masters");
+    }
 
-  const { data, error } =
-    await supabaseClient
-      .from("masters")
-      .select("*")
-      .order("rating", {
-        ascending: false
-      });
 
-  if (error) {
+    if (pageId === "profilePage") {
 
-    container.innerHTML =
-      '<div class="empty">' +
-      'Hozircha ro\'yxatda usta yo\'q.' +
-      '</div>';
+        document
+            .getElementById("navProfile")
+            .classList.add("active");
 
-    return;
-  }
+    }
 
-  if (!data || data.length === 0) {
-
-    container.innerHTML =
-      '<div class="empty">' +
-      'Hozircha haqiqiy usta ro\'yxatdan o\'tmagan.' +
-      '</div>';
-
-    return;
-  }
-
-  renderMasters(
-    data,
-    container
-  );
 }
 
 
-/* ==================================
-   USTA RO'YXATDAN O'TISH
-================================== */
+/* =========================================
+   BOSH SAHIFA
+========================================= */
+
+function goHome() {
+
+    showPage("homePage");
+
+    loadHomeMasters();
+
+}
+
+
+/* =========================================
+   PROFIL
+========================================= */
+
+function showProfile() {
+
+    showPage("profilePage");
+
+
+    if (!telegramUser) {
+
+        document
+            .getElementById("profileName")
+            .textContent =
+                "Telegram orqali kiring";
+
+
+        document
+            .getElementById("profileUsername")
+            .textContent = "";
+
+
+        return;
+    }
+
+
+    const firstName =
+        telegramUser.first_name || "";
+
+
+    const lastName =
+        telegramUser.last_name || "";
+
+
+    const fullName =
+        `${firstName} ${lastName}`.trim();
+
+
+    document
+        .getElementById("profileName")
+        .textContent =
+            fullName ||
+            "Foydalanuvchi";
+
+
+    document
+        .getElementById("profileUsername")
+        .textContent =
+            telegramUser.username
+                ? "@" +
+                  telegramUser.username
+                : "Telegram foydalanuvchisi";
+
+}
+
+
+/* =========================================
+   USTA BO‘LISH
+========================================= */
+
+function openMasterRegistration() {
+
+    showPage("menuPage");
+
+}
+
+
+/* =========================================
+   USTA RO‘YXATDAN O‘TISH
+========================================= */
 
 async function registerMaster() {
 
-  const user =
-    tg.initDataUnsafe &&
-    tg.initDataUnsafe.user;
+    if (!telegramUser) {
 
-  const name =
-    document
-      .getElementById("masterName")
-      .value
-      .trim();
+        alert(
+            "Iltimos, UstaTop'ni Telegram bot orqali oching."
+        );
 
-  const city =
-    document
-      .getElementById("masterCity")
-      .value
-      .trim();
-
-  const category =
-    document
-      .getElementById("masterCategory")
-      .value;
-
-  const description =
-    document
-      .getElementById("masterDescription")
-      .value
-      .trim();
-
-  const price =
-    Number(
-      document
-        .getElementById("masterPrice")
-        .value
-    );
+        return;
+    }
 
 
-  if (!name || !city || !category) {
-
-    alert(
-      "Iltimos, ism, shahar va kategoriyani kiriting."
-    );
-
-    return;
-  }
+    const name =
+        document
+            .getElementById("masterName")
+            .value
+            .trim();
 
 
-  if (!user) {
-
-    alert(
-      "Iltimos, UstaTop'ni Telegram ichidan oching."
-    );
-
-    return;
-  }
+    const category =
+        document
+            .getElementById("masterCategory")
+            .value;
 
 
-  const { error } =
-    await supabaseClient
-      .from("masters")
-      .insert({
-
-        name: name,
-
-        category: category,
-
-        city: city,
-
-        description:
-          description,
-
-        price_from:
-          price || 0,
-
-        rating: 0,
-
-        completed_orders: 0,
-
-        telegram_username:
-          user.username || null
-
-      });
+    const city =
+        document
+            .getElementById("masterCity")
+            .value
+            .trim();
 
 
-  if (error) {
-
-    console.error(error);
-
-    alert(
-      "Profilni yuborishda xatolik yuz berdi."
-    );
-
-    return;
-  }
+    const description =
+        document
+            .getElementById("masterDescription")
+            .value
+            .trim();
 
 
-  alert(
-    "Usta profili yuborildi! 🎉"
-  );
+    const price =
+        Number(
+            document
+                .getElementById("masterPrice")
+                .value
+        ) || 0;
 
 
-  document
-    .getElementById("masterName")
-    .value = "";
+    if (!name) {
 
-  document
-    .getElementById("masterCity")
-    .value = "";
+        alert(
+            "Ismingizni kiriting."
+        );
 
-  document
-    .getElementById("masterCategory")
-    .value = "";
-
-  document
-    .getElementById("masterDescription")
-    .value = "";
-
-  document
-    .getElementById("masterPrice")
-    .value = "";
+        return;
+    }
 
 
-  showPage("homePage");
+    if (!city) {
 
-  loadAllMasters();
+        alert(
+            "Shahringizni kiriting."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const { error } =
+            await supabaseClient
+                .from("masters")
+                .insert({
+
+                    name: name,
+
+                    category: category,
+
+                    city: city,
+
+                    description: description,
+
+                    price_from: price,
+
+                    rating: 0,
+
+                    completed_orders: 0,
+
+                    telegram_username:
+                        telegramUser.username ||
+                        null
+
+                });
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Xatolik: " +
+                error.message
+            );
+
+            return;
+        }
+
+
+        alert(
+            "✅ E'loningiz muvaffaqiyatli joylandi!"
+        );
+
+
+        document
+            .getElementById("masterName")
+            .value = "";
+
+
+        document
+            .getElementById("masterCity")
+            .value = "";
+
+
+        document
+            .getElementById("masterDescription")
+            .value = "";
+
+
+        document
+            .getElementById("masterPrice")
+            .value = "";
+
+
+        goHome();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Kutilmagan xatolik yuz berdi."
+        );
+
+    }
 
 }
 
 
-/* ==================================
-   XAVFSIZ MATN
-================================== */
+/* =========================================
+   BOSH SAHIFADAGI USTALAR
+========================================= */
 
-function escapeHTML(text) {
+async function loadHomeMasters() {
 
-  return String(text)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    const container =
+        document.getElementById(
+            "homeMasters"
+        );
+
+
+    container.innerHTML = `
+        <div class="loading">
+            Yuklanmoqda...
+        </div>
+    `;
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("masters")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(20);
+
+
+    if (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="empty">
+                ❌ Ustalarni yuklashda xatolik.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    renderMasters(
+        data,
+        container
+    );
 
 }
 
 
-/* ==================================
-   BOSHLASH
-================================== */
+/* =========================================
+   KATEGORIYA
+========================================= */
 
-loadAllMasters();
+async function openCategory(category) {
+
+    showPage(
+        "categoryPage"
+    );
+
+
+    document
+        .getElementById("categoryTitle")
+        .textContent =
+            category;
+
+
+    const container =
+        document.getElementById(
+            "categoryMasters"
+        );
+
+
+    container.innerHTML = `
+        <div class="loading">
+            Yuklanmoqda...
+        </div>
+    `;
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("masters")
+            .select("*")
+            .eq(
+                "category",
+                category
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="empty">
+                ❌ Ustalarni yuklashda xatolik.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    renderMasters(
+        data,
+        container
+    );
+
+}
+
+
+/* =========================================
+   USTA KARTOCHKALARI
+========================================= */
+
+function renderMasters(
+    masters,
+    container
+) {
+
+    container.innerHTML = "";
+
+
+    if (
+        !masters ||
+        masters.length === 0
+    ) {
+
+        container.innerHTML = `
+            <div class="empty">
+                😔
+                <br><br>
+                Hozircha bu yerda ustalar yo‘q.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    masters.forEach(
+        function(master) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "master-card";
+
+
+            card.style.cursor =
+                "pointer";
+
+
+            /*
+             * ENG MUHIM QISM:
+             * E'LONNI BOSGANDA
+             * O‘SHA USTANING PROFILI OCHILADI
+             */
+
+            card.onclick =
+                function() {
+
+                    openMasterProfile(
+                        master.id
+                    );
+
+                };
+
+
+            const price =
+                master.price_from &&
+                Number(
+                    master.price_from
+                ) > 0
+
+                ? Number(
+                    master.price_from
+                  ).toLocaleString(
+                    "uz-UZ"
+                  ) + " so‘mdan"
+
+                : "Kelishiladi";
+
+
+            card.innerHTML = `
+
+                <h3>
+                    ${escapeHtml(
+                        master.name
+                    )}
+                </h3>
+
+
+                <p>
+                    🔧
+                    ${escapeHtml(
+                        master.category
+                    )}
+                </p>
+
+
+                <p>
+                    📍
+                    ${escapeHtml(
+                        master.city
+                    )}
+                </p>
+
+
+                <p>
+                    ⭐
+                    ${master.rating || 0}
+
+                    ·
+
+                    ${master.completed_orders || 0}
+                    ta buyurtma
+                </p>
+
+
+                <p class="master-price">
+                    💰 ${price}
+                </p>
+
+
+                <p style="
+                    color:#7c3aed;
+                    font-weight:bold;
+                    margin-top:12px;
+                ">
+                    Profilni ko‘rish →
+                </p>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   USTA PROFILI
+========================================= */
+
+async function openMasterProfile(
+    masterId
+) {
+
+    showPage(
+        "masterPage"
+    );
+
+
+    const page =
+        document.getElementById(
+            "masterPage"
+        );
+
+
+    page.innerHTML = `
+
+        <div class="topbar">
+
+            <button
+                class="back-btn"
+                onclick="goHome()"
+            >
+                ←
+            </button>
+
+            <h2>
+                Usta profili
+            </h2>
+
+        </div>
+
+
+        <div class="loading">
+            Yuklanmoqda...
+        </div>
+
+    `;
+
+
+    const {
+        data: master,
+        error
+    } =
+        await supabaseClient
+            .from("masters")
+            .select("*")
+            .eq(
+                "id",
+                masterId
+            )
+            .single();
+
+
+    if (
+        error ||
+        !master
+    ) {
+
+        console.error(error);
+
+
+        page.innerHTML = `
+
+            <div class="topbar">
+
+                <button
+                    class="back-btn"
+                    onclick="goHome()"
+                >
+                    ←
+                </button>
+
+                <h2>
+                    Usta profili
+                </h2>
+
+            </div>
+
+
+            <div class="content">
+
+                <div class="empty">
+
+                    ❌
+
+                    <br><br>
+
+                    Usta topilmadi.
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        return;
+    }
+
+
+    const price =
+        master.price_from &&
+        Number(
+            master.price_from
+        ) > 0
+
+        ? Number(
+            master.price_from
+          ).toLocaleString(
+            "uz-UZ"
+          ) + " so‘mdan"
+
+        : "Kelishiladi";
+
+
+    let contactButton = "";
+
+
+    if (
+        master.telegram_username
+    ) {
+
+        const username =
+            String(
+                master.telegram_username
+            ).replace(
+                "@",
+                ""
+            );
+
+
+        contactButton = `
+
+            <button
+                class="main-btn"
+                onclick="contactMaster('${escapeHtml(
+                    username
+                )}')"
+            >
+                💬 Usta bilan bog‘lanish
+            </button>
+
+        `;
+
+    } else {
+
+        contactButton = `
+
+            <button
+                class="main-btn"
+                onclick="alert('Ustaning Telegram username ma’lumoti mavjud emas.')"
+            >
+                💬 Bog‘lanish
+            </button>
+
+        `;
+
+    }
+
+
+    page.innerHTML = `
+
+        <div class="topbar">
+
+            <button
+                class="back-btn"
+                onclick="goHome()"
+            >
+                ←
+            </button>
+
+            <h2>
+                Usta profili
+            </h2>
+
+        </div>
+
+
+        <div class="master-profile">
+
+
+            <div class="master-avatar">
+                👨‍🔧
+            </div>
+
+
+            <h2>
+                ${escapeHtml(
+                    master.name
+                )}
+            </h2>
+
+
+            <p class="master-category">
+
+                ${escapeHtml(
+                    master.category
+                )}
+
+            </p>
+
+
+            <div class="rating">
+
+                ⭐
+                ${master.rating || 0}
+
+                <span>
+
+                    ·
+                    ${master.completed_orders || 0}
+                    ta buyurtma
+
+                </span>
+
+            </div>
+
+
+            <div class="profile-info">
+
+
+                <div>
+
+                    <b>
+                        📍 Shahar
+                    </b>
+
+                    <p>
+
+                        ${escapeHtml(
+                            master.city ||
+                            "Ko‘rsatilmagan"
+                        )}
+
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <b>
+                        💰 Xizmat narxi
+                    </b>
+
+                    <p>
+                        ${price}
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <b>
+                        📝 Usta haqida
+                    </b>
+
+                    <p>
+
+                        ${escapeHtml(
+                            master.description ||
+                            "Ma’lumot kiritilmagan."
+                        )}
+
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <b>
+                        ⭐ Reyting
+                    </b>
+
+                    <p>
+                        ${master.rating || 0} / 5
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <b>
+                        📋 Bajarilgan buyurtmalar
+                    </b>
+
+                    <p>
+
+                        ${master.completed_orders || 0}
+                        ta
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            ${contactButton}
+
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================
+   USTA BILAN BOG‘LANISH
+========================================= */
+
+function contactMaster(
+    username
+) {
+
+    if (!username) {
+
+        alert(
+            "Ustaning Telegram username ma’lumoti mavjud emas."
+        );
+
+        return;
+    }
+
+
+    const cleanUsername =
+        String(
+            username
+        ).replace(
+            "@",
+            ""
+        );
+
+
+    window.open(
+        "https://t.me/" +
+        cleanUsername,
+        "_blank"
+    );
+
+}
+
+
+/* =========================================
+   QIDIRUV
+========================================= */
+
+let searchTimer = null;
+
+
+function searchMasters() {
+
+    clearTimeout(
+        searchTimer
+    );
+
+
+    searchTimer =
+        setTimeout(
+            performSearch,
+            350
+        );
+
+}
+
+
+async function performSearch() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const query =
+        input.value.trim();
+
+
+    if (!query) {
+
+        loadHomeMasters();
+
+        return;
+    }
+
+
+    const container =
+        document.getElementById(
+            "homeMasters"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="loading">
+            Qidirilmoqda...
+        </div>
+
+    `;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("masters")
+            .select("*")
+            .or(
+                `name.ilike.%${query}%,category.ilike.%${query}%,city.ilike.%${query}%`
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                ❌
+
+                <br><br>
+
+                Qidirishda xatolik yuz berdi.
+
+            </div>
+
+        `;
+
+
+        return;
+    }
+
+
+    renderMasters(
+        data,
+        container
+    );
+
+}
+
+
+/* =========================================
+   APP ISHGA TUSHISHI
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadHomeMasters();
+
+
+        if (telegramUser) {
+
+            const firstName =
+                telegramUser.first_name || "";
+
+
+            const lastName =
+                telegramUser.last_name || "";
+
+
+            const fullName =
+                `${firstName} ${lastName}`.trim();
+
+
+            document
+                .getElementById(
+                    "profileName"
+                )
+                .textContent =
+                    fullName ||
+                    "Foydalanuvchi";
+
+
+            document
+                .getElementById(
+                    "profileUsername"
+                )
+                .textContent =
+                    telegramUser.username
+                        ? "@" +
+                          telegramUser.username
+                        : "Telegram foydalanuvchisi";
+
+        }
+
+    }
+);
 
 </script>
 
