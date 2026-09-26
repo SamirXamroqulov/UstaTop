@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>UstaTop</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -14,92 +17,117 @@
     }
 
     body {
-      background: #f5f6f8;
-      color: #171717;
+      background: #f5f7fb;
+      color: #111827;
+      padding-bottom: 80px;
     }
 
-    .app {
-      max-width: 600px;
-      margin: auto;
+    header {
+      background: #ffffff;
       padding: 20px;
-      padding-bottom: 90px;
+      border-bottom: 1px solid #e5e7eb;
     }
 
-    .header {
-      margin-bottom: 20px;
+    header h1 {
+      font-size: 25px;
     }
 
-    .logo {
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .subtitle {
-      color: #777;
-      margin-top: 6px;
+    header p {
+      color: #6b7280;
+      margin-top: 5px;
+      font-size: 14px;
     }
 
     .search {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
+      padding: 15px 20px;
       background: white;
-      font-size: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      outline: none;
-      margin-bottom: 25px;
     }
 
-    h2 {
-      font-size: 20px;
-      margin-bottom: 14px;
+    .search input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
     }
 
     .categories {
+      padding: 15px 20px;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 28px;
+      gap: 10px;
     }
 
     .category {
       background: white;
       border: none;
-      border-radius: 16px;
-      padding: 20px 10px;
-      text-align: left;
-      font-size: 16px;
+      padding: 15px 10px;
+      border-radius: 12px;
+      font-size: 14px;
       cursor: pointer;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-
-    .category span {
-      display: block;
-      font-size: 28px;
-      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
     }
 
     .category:active {
-      transform: scale(0.97);
+      transform: scale(.97);
     }
 
     .banner {
-      background: #111;
+      margin: 5px 20px 15px;
+      padding: 18px;
+      background: #111827;
       color: white;
-      border-radius: 18px;
-      padding: 22px;
-      margin-bottom: 25px;
+      border-radius: 15px;
     }
 
-    .banner h3 {
-      font-size: 20px;
-      margin-bottom: 7px;
+    .banner h2 {
+      font-size: 17px;
+      margin-bottom: 5px;
     }
 
     .banner p {
-      color: #ccc;
-      font-size: 14px;
+      font-size: 13px;
+      color: #d1d5db;
+    }
+
+    .section-title {
+      padding: 5px 20px 10px;
+      font-size: 19px;
+      font-weight: bold;
+    }
+
+    #masters {
+      padding: 0 20px;
+    }
+
+    .master {
+      background: white;
+      padding: 16px;
+      border-radius: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .master h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+
+    .master p {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 5px 0;
+    }
+
+    .rating {
+      font-weight: bold;
+      color: #f59e0b;
+    }
+
+    .price {
+      margin-top: 8px;
+      font-weight: bold;
     }
 
     .bottom-nav {
@@ -107,112 +135,238 @@
       bottom: 0;
       left: 0;
       right: 0;
-      max-width: 600px;
-      margin: auto;
+      height: 65px;
       background: white;
+      border-top: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-around;
-      padding: 12px 5px;
-      border-top: 1px solid #ddd;
+      align-items: center;
     }
 
-    .nav-btn {
-      border: none;
+    .bottom-nav button {
       background: none;
-      font-size: 13px;
-      color: #777;
-      cursor: pointer;
+      border: none;
+      font-size: 12px;
+      color: #6b7280;
     }
 
-    .nav-btn span {
-      display: block;
-      font-size: 22px;
-      margin-bottom: 3px;
-    }
-
-    .active {
-      color: #111;
-      font-weight: bold;
+    .loading {
+      text-align: center;
+      color: #6b7280;
+      padding: 20px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="app">
+<header>
+  <h1>🔧 UstaTop</h1>
+  <p>Kerakli ustani tez va oson toping</p>
+</header>
 
-    <div class="header">
-      <div class="logo">🔧 UstaTop</div>
-      <div class="subtitle">Kerakli ustani tez va oson toping</div>
-    </div>
+<div class="search">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="🔍 Xizmat yoki usta qidirish..."
+  >
+</div>
 
-    <input
-      class="search"
-      type="text"
-      placeholder="🔍 Xizmat yoki usta qidirish..."
-    >
+<div class="categories">
 
-    <h2>Kategoriyalar</h2>
+  <button class="category" onclick="loadMasters('Ta\\'mirlash')">
+    🔧 Ta'mirlash
+  </button>
 
-    <div class="categories">
+  <button class="category" onclick="loadMasters('Elektrik')">
+    ⚡ Elektrik
+  </button>
 
-      <button class="category">
-        <span>🔧</span>
-        Ta'mirlash
-      </button>
+  <button class="category" onclick="loadMasters('Texnika')">
+    💻 Texnika
+  </button>
 
-      <button class="category">
-        <span>⚡</span>
-        Elektrik
-      </button>
+  <button class="category" onclick="loadMasters('Avto xizmat')">
+    🚗 Avto xizmat
+  </button>
 
-      <button class="category">
-        <span>💻</span>
-        Texnika
-      </button>
+  <button class="category" onclick="loadMasters('Tozalash')">
+    🧹 Tozalash
+  </button>
 
-      <button class="category">
-        <span>🚗</span>
-        Avto xizmat
-      </button>
+  <button class="category" onclick="loadMasters('Yetkazib berish')">
+    📦 Yetkazib berish
+  </button>
 
-      <button class="category">
-        <span>🧹</span>
-        Tozalash
-      </button>
+</div>
 
-      <button class="category">
-        <span>📦</span>
-        Yetkazib berish
-      </button>
+<div class="banner">
+  <h2>Usta bo‘lib ishlaysizmi?</h2>
+  <p>UstaTop orqali yangi mijozlarni toping.</p>
+</div>
 
-    </div>
+<div class="section-title">
+  ⭐ Mashhur ustalar
+</div>
 
-    <div class="banner">
-      <h3>Usta bo‘lib ishlaysizmi?</h3>
-      <p>UstaTop'ga xizmatlaringizni qo‘shing va yangi mijozlar toping.</p>
-    </div>
+<div id="masters">
+  <div class="loading">Ustalar yuklanmoqda...</div>
+</div>
 
-  </div>
+<div class="bottom-nav">
+  <button>🏠<br>Bosh sahifa</button>
+  <button>📋<br>Buyurtmalar</button>
+  <button>👤<br>Profil</button>
+</div>
 
-  <div class="bottom-nav">
+<script>
 
-    <button class="nav-btn active">
-      <span>🏠</span>
-      Bosh sahifa
-    </button>
+  const SUPABASE_URL =
+    "https://qratbydofxbehieblqxz.supabase.co";
 
-    <button class="nav-btn">
-      <span>📋</span>
-      Buyurtmalar
-    </button>
+  const SUPABASE_KEY =
+    "sb_publishable_cvT_-P4fZf-aMwaGNfrU1A_jfqIiH7L";
 
-    <button class="nav-btn">
-      <span>👤</span>
-      Profil
-    </button>
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
-  </div>
+
+  async function loadMasters(category = null) {
+
+    const container = document.getElementById("masters");
+
+    container.innerHTML =
+      '<div class="loading">Yuklanmoqda...</div>';
+
+    let query = supabaseClient
+      .from("masters")
+      .select("*")
+      .order("rating", { ascending: false });
+
+    if (category) {
+      query = query.eq("category", category);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error(error);
+
+      container.innerHTML =
+        '<div class="loading">Ustalarni yuklashda xatolik yuz berdi.</div>';
+
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      container.innerHTML =
+        '<div class="loading">Bu kategoriyada hozircha usta yo‘q.</div>';
+
+      return;
+    }
+
+    container.innerHTML = "";
+
+    data.forEach(master => {
+
+      const card = document.createElement("div");
+
+      card.className = "master";
+
+      card.innerHTML = `
+        <h3>${master.name}</h3>
+
+        <p>📍 ${master.city}</p>
+
+        <p>${master.description || "Xizmatlar haqida ma'lumot yo‘q."}</p>
+
+        <p class="rating">
+          ⭐ ${master.rating || "0.0"}
+          · ${master.completed_orders || 0} ta buyurtma
+        </p>
+
+        <p class="price">
+          💰 ${master.price_from || 0} so‘mdan
+        </p>
+      `;
+
+      container.appendChild(card);
+
+    });
+  }
+
+
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", async function () {
+
+      const text = this.value.trim();
+
+      if (!text) {
+        loadMasters();
+        return;
+      }
+
+      const container =
+        document.getElementById("masters");
+
+      const { data, error } =
+        await supabaseClient
+          .from("masters")
+          .select("*")
+          .ilike("name", `%${text}%`);
+
+      if (error) {
+
+        container.innerHTML =
+          '<div class="loading">Qidirishda xatolik.</div>';
+
+        return;
+      }
+
+      container.innerHTML = "";
+
+      if (!data || data.length === 0) {
+
+        container.innerHTML =
+          '<div class="loading">Usta topilmadi.</div>';
+
+        return;
+      }
+
+      data.forEach(master => {
+
+        const card =
+          document.createElement("div");
+
+        card.className = "master";
+
+        card.innerHTML = `
+          <h3>${master.name}</h3>
+          <p>📍 ${master.city}</p>
+          <p>${master.description || ""}</p>
+          <p class="rating">
+            ⭐ ${master.rating || "0.0"}
+          </p>
+          <p class="price">
+            💰 ${master.price_from || 0} so‘mdan
+          </p>
+        `;
+
+        container.appendChild(card);
+
+      });
+
+    });
+
+
+  loadMasters();
+
+</script>
 
 </body>
 </html>
